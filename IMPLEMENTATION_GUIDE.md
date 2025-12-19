@@ -28,20 +28,26 @@ Create the following directory structure. This structure is required—the AI ex
 ```
 HomeNetwork/
 ├── docs/
-│   ├── network/          # Network topology, VLANs, routing
-│   │   └── configs/      # Backup configuration files
-│   ├── devices/          # Physical devices (Router, Switches, APs)
-│   ├── servers/          # NAS, Home Server, compute hosts
-│   └── services/         # Software services (Plex, Home Assistant, etc.)
-├── inventory/            # Structured data (YAML files)
+│   ├── network/          # Network topology, VLANs, routing (DIRECTORY)
+│   │   ├── topology.md   # Network topology file (NOT docs/topology.md)
+│   │   └── configs/      # Backup configuration files (DIRECTORY)
+│   ├── devices/          # Physical devices directory (contains {device}.md files)
+│   ├── servers/          # Servers directory (contains {server}.md files, NOT docs/servers.md)
+│   └── services/         # Services directory (contains {service}.md files, NOT docs/services.md)
+├── inventory/            # Structured data (YAML files) (DIRECTORY)
 │   ├── devices.yaml      # Device inventory
 │   ├── servers.yaml      # Server inventory
-│   └── services.yaml     # Service inventory
-├── scripts/              # Automation scripts
-├── diagnostics/          # Troubleshooting notes (created as needed)
-└── .cursor/              # AI Configuration (if using Cursor)
-    └── rules/            # AI team protocols
+│   └── services.yaml     # Service inventory (NOT ip_allocation.yaml)
+├── scripts/              # Automation scripts (DIRECTORY)
+├── diagnostics/          # Troubleshooting notes (created as needed) (DIRECTORY)
+└── .cursor/              # AI Configuration (if using Cursor) (DIRECTORY)
+    └── rules/            # AI team protocols (DIRECTORY)
 ```
+
+**Critical Structure Notes:**
+- `docs/devices/`, `docs/servers/`, and `docs/services/` are **directories** containing individual markdown files (e.g., `docs/devices/router.md`, `docs/servers/nas.md`)
+- `docs/network/` is a **directory** containing `topology.md` (NOT `docs/topology.md` at the root)
+- `inventory/` contains three YAML files: `devices.yaml`, `servers.yaml`, and `services.yaml` (NOT `ip_allocation.yaml`)
 
 **Note**: IP addresses shown in examples throughout this guide (e.g., 192.168.1.1, 192.168.1.200) are placeholder values from the standard private IP range. Replace them with your actual network configuration.
 
@@ -155,14 +161,28 @@ The AI must never assume. Always verify:
 
 When setting up a new Vibe Infrastructure system, the AI should:
 
-1. **Create directory structure** as specified above
-2. **Create initial template files**:
-   - `docs/network/topology.md` (basic template)
+1. **Copy protocol files from repository**:
+   - Copy `networkguide.mdc` to `.cursor/rules/networkguide.mdc` (or equivalent rules directory)
+   - Copy `networkteam.mdc` to `.cursor/rules/networkteam.mdc` (or equivalent rules directory)
+   - These files define the AI's behavior and must be in place before proceeding
+
+2. **Create directory structure** (exactly as specified above):
+   - `docs/network/` (with `configs/` subdirectory)
+   - `docs/devices/` (directory for individual device files)
+   - `docs/servers/` (directory for individual server files)
+   - `docs/services/` (directory for individual service files)
+   - `inventory/` (for YAML inventory files)
+   - `scripts/` (for automation scripts)
+   - `diagnostics/` (for troubleshooting notes, created as needed)
+   - `.cursor/rules/` (for AI protocol files)
+
+3. **Create initial template files**:
+   - `docs/network/topology.md` (basic template - NOT `docs/topology.md`)
    - `inventory/devices.yaml` (YAML structure template)
    - `inventory/servers.yaml` (YAML structure template)
-   - `inventory/services.yaml` (YAML structure template)
-   - `README.md` (project overview)
-3. **Set up AI team protocol** in `.cursor/rules/networkguide.mdc` (or equivalent)
+   - `inventory/services.yaml` (YAML structure template - NOT `ip_allocation.yaml`)
+   - Note: Do NOT create `docs/servers.md` or `docs/services.md` as single files - these are directories containing individual `{name}.md` files
+
 4. **Ask user for initial information**:
    - Router model and IP address
    - Access method (SSH user, web UI URL)

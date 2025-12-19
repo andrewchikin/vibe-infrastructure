@@ -34,6 +34,12 @@ You: "I want to implement Vibe Infrastructure from
      Help me set it up for my home network."
 ```
 
+**What the AI will do:**
+1. Read the repository documentation
+2. Copy `networkguide.mdc` and `networkteam.mdc` to `.cursor/rules/` (or equivalent)
+3. Create the directory structure: `docs/network/`, `docs/devices/`, `docs/servers/`, `docs/services/`, `inventory/`, `scripts/`
+4. Create initial template files and ask you for your network details
+
 AI: [reads the repo, asks about your setup, creates structure]
 
 ### Option 2: Manual Setup (More Control)
