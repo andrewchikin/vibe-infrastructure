@@ -79,13 +79,7 @@ mkdir -p docs/{network/configs,devices,servers,services}
 mkdir -p inventory scripts diagnostics
 ```
 
-Then tell Cursor: *"Help me set up Vibe Infrastructure. I've loaded the protocol files."*
-
-### For Claude.ai or Claude Desktop
-
-1. Create a new project called "HomeNetwork" (or similar)
-2. Set up `networkguide.mdc` and `networkteam.mdc` as rules (check Claude's documentation for the exact location - typically in a `.claude/` or rules directory)
-3. In your first conversation, say: *"I want to implement Vibe Infrastructure using the protocols I've set up as rules. I have a [router brand] at [IP] to start with."*
+Then tell Cursor: *"Help me set up Vibe Infrastructure. I've loaded the protocol files in `.cursor/rules/`. I have a [router brand] at [IP] to start with."*
 
 ### For Other AI Assistants
 
@@ -272,8 +266,8 @@ As you use the system, it naturally documents YOUR specific hardware—your rout
 ## Troubleshooting
 
 **AI not following protocols?**
-- Verify protocol files are set up as rules in `.cursor/rules/` (Cursor)
-- Check that rules are properly configured (Claude and other AI assistants)
+- Verify protocol files are set up as rules (e.g., in `.cursor/rules/` for Cursor)
+- Check that rules are properly configured in your AI assistant's rules directory
 - Ask: "What are your core workflow steps?" (Should respond: Verify → Research → Plan → Execute → Document)
 
 **Documentation not updating?**
