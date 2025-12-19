@@ -47,6 +47,7 @@ HomeNetwork/
 **Critical Structure Notes:**
 - `docs/devices/`, `docs/servers/`, and `docs/services/` are **directories** containing individual markdown files (e.g., `docs/devices/router.md`, `docs/servers/nas.md`)
 - `docs/network/` is a **directory** containing `topology.md` (NOT `docs/topology.md` at the root)
+- `docs/network/configs/` is a **required subdirectory** for storing configuration backups
 - `inventory/` contains three YAML files: `devices.yaml`, `servers.yaml`, and `services.yaml` (NOT `ip_allocation.yaml`)
 
 **Note**: IP addresses shown in examples throughout this guide (e.g., 192.168.1.1, 192.168.1.200) are placeholder values from the standard private IP range. Replace them with your actual network configuration.
@@ -167,7 +168,8 @@ When setting up a new Vibe Infrastructure system, the AI should:
    - These files define the AI's behavior and must be in place before proceeding
 
 2. **Create directory structure** (exactly as specified above):
-   - `docs/network/` (with `configs/` subdirectory)
+   - `docs/network/` (directory)
+   - `docs/network/configs/` (subdirectory for configuration backups - REQUIRED)
    - `docs/devices/` (directory for individual device files)
    - `docs/servers/` (directory for individual server files)
    - `docs/services/` (directory for individual service files)

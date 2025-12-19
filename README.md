@@ -37,7 +37,14 @@ You: "I want to implement Vibe Infrastructure from
 **What the AI will do:**
 1. Read the repository documentation
 2. Copy `networkguide.mdc` and `networkteam.mdc` to `.cursor/rules/` (or equivalent)
-3. Create the directory structure: `docs/network/`, `docs/devices/`, `docs/servers/`, `docs/services/`, `inventory/`, `scripts/`
+3. Create the complete directory structure:
+   - `docs/network/` (with `configs/` subdirectory for configuration backups)
+   - `docs/devices/` (directory for device documentation)
+   - `docs/servers/` (directory for server documentation)
+   - `docs/services/` (directory for service documentation)
+   - `inventory/` (for YAML inventory files)
+   - `scripts/` (for automation scripts)
+   - `diagnostics/` (for troubleshooting notes)
 4. Create initial template files and ask you for your network details
 
 AI: [reads the repo, asks about your setup, creates structure]
@@ -81,7 +88,8 @@ cp networkguide.mdc .cursor/rules/
 cp networkteam.mdc .cursor/rules/
 
 # Create documentation structure:
-mkdir -p docs/{network/configs,devices,servers,services}
+mkdir -p docs/network/configs
+mkdir -p docs/{devices,servers,services}
 mkdir -p inventory scripts diagnostics
 ```
 
@@ -98,7 +106,8 @@ cp networkguide.mdc .cursor/rules/
 cp networkteam.mdc .cursor/rules/
 
 # Create documentation structure:
-mkdir -p docs/{network/configs,devices,servers,services}
+mkdir -p docs/network/configs
+mkdir -p docs/{devices,servers,services}
 mkdir -p inventory scripts diagnostics
 ```
 
