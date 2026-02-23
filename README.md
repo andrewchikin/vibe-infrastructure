@@ -1,416 +1,416 @@
 # Vibe Infrastructure
 
-> **Conversational AI for Home Network Management**  
-> Manage your network through natural language while AI maintains comprehensive documentation as the source of truth.
+> **Разговорный ИИ для управления домашней сетью**  
+> Управляйте своей сетью через естественный язык, пока ИИ поддерживает полную документацию как источник истины.
 
-**Version 1.0** | Released December 19, 2025
-
----
-
-## What Is This?
-
-Vibe Infrastructure is a system that lets you manage your home network by talking to AI in plain English. The AI maintains detailed documentation about your network, and that documentation becomes the "infrastructure"—always up-to-date, always accurate.
-
-Instead of remembering IP addresses, hunting for configuration files, or googling error messages, you just ask:
-- "Why is my media server slow?"
-- "Update all my Docker containers"
-- "Can't access file shares from Windows—what's wrong?"
-
-The AI figures it out, fixes it, documents it, and learns from it.
-
-**Based on 6+ months of real-world use** managing a complex home network with multiple VLANs, 20+ Docker containers, and 50+ IoT devices.
+**Версия 1.0** | Выпущено 19 декабря 2025
 
 ---
 
-## Quick Start
+## Что это?
 
-### Option 1: Give AI the GitHub URL (Easiest)
+Vibe Infrastructure — это система, которая позволяет управлять домашней сетью, общаясь с ИИ на простом языке. ИИ поддерживает подробную документацию о вашей сети, и эта документация становится «инфраструктурой» — всегда актуальной, всегда точной.
 
-Modern AI assistants can read GitHub repositories directly:
+Вместо того чтобы запоминать IP-адреса, искать файлы конфигурации или гуглить сообщения об ошибках, вы просто спрашиваете:
+- "Почему мой медиа-сервер медленный?"
+- "Обнови все мои Docker-контейнеры"
+- "Не могу получить доступ к файловым шаринам с Windows — в чём проблема?"
+
+ИИ разбирается, исправляет, документирует и учится на этом.
+
+**Основано на 6+ месяцах реального использования** для управления сложной домашней сетью с несколькими VLAN, 20+ Docker-контейнерами и 50+ IoT-устройствами.
+
+---
+
+## Быстрый старт
+
+### Вариант 1: Дать ИИ URL GitHub (Самый простой)
+
+Современные ИИ-ассистенты могут читать репозитории GitHub напрямую:
 
 ```
-You: "I want to implement Vibe Infrastructure from 
+Вы: "Я хочу реализовать Vibe Infrastructure из 
      https://github.com/ngtwolf/vibe-infrastructure
-     Help me set it up for my home network."
+     Помоги мне настроить это для моей домашней сети."
 ```
 
-**What the AI will do:**
-1. Read the repository documentation
-2. **Copy** `networkguide.mdc` and `networkteam.mdc` from the repository to `.cursor/rules/` (or equivalent) - these files already exist in the repo, do not create new ones
-3. Create the complete directory structure (all directories must be created):
-   - `docs/` (root documentation directory)
-   - `docs/network/` (directory for network topology)
-   - `docs/network/configs/` (subdirectory for configuration backups - REQUIRED)
-   - `docs/devices/` (directory for device documentation files)
-   - `docs/servers/` (directory for server documentation files)
-   - `docs/services/` (directory for service documentation files)
-   - `inventory/` (for YAML inventory files)
-   - `scripts/` (for automation scripts)
-   - `diagnostics/` (for troubleshooting notes - create during initial setup)
-4. Create initial template files at exact paths:
-   - `docs/network/topology.md` (NOT `docs/topology.md`)
+**Что сделает ИИ:**
+1. Прочитает документацию репозитория
+2. **Скопирует** `networkguide.mdc` и `networkteam.mdc` из репозитория в `.cursor/rules/` (или эквивалент) - эти файлы уже существуют в репозитории, не создавайте новые
+3. Создаст полную структуру директорий (все директории должны быть созданы):
+   - `docs/` (корневая директория документации)
+   - `docs/network/` (директория для топологии сети)
+   - `docs/network/configs/` (поддиректория для резервных копий конфигураций - ОБЯЗАТЕЛЬНО)
+   - `docs/devices/` (директория для файлов документации устройств)
+   - `docs/servers/` (директория для файлов документации серверов)
+   - `docs/services/` (директория для файлов документации сервисов)
+   - `inventory/` (для YAML файлов инвентаря)
+   - `scripts/` (для скриптов автоматизации)
+   - `diagnostics/` (для заметок по устранению неполадок - создаётся при первоначальной настройке)
+4. Создаст начальные шаблонные файлы по точным путям:
+   - `docs/network/topology.md` (НЕ `docs/topology.md`)
    - `inventory/devices.yaml`, `inventory/servers.yaml`, `inventory/services.yaml`
-5. Ask you for your network details to begin documentation
+5. Спросит у вас детали вашей сети для начала документации
 
-AI: [reads the repo, asks about your setup, creates structure]
+ИИ: [читает репозиторий, спрашивает о вашей настройке, создаёт структуру]
 
-### Option 2: Manual Setup (More Control)
+### Вариант 2: Ручная настройка (Больше контроля)
 
-1. **Read the Overview** - Understand what you're building  
+1. **Прочитайте Обзор** - Поймите, что вы строите  
    → `OVERVIEW.md`
 
-2. **Read the Implementation Guide** - Technical details  
+2. **Прочитайте Руководство по реализации** - Технические детали  
    → `IMPLEMENTATION_GUIDE.md`
 
-3. **Set up AI protocols** - Set up rules for your AI assistant  
-   → `networkguide.mdc` and `networkteam.mdc` (place in `.cursor/rules/` for Cursor, or appropriate rules directory for other AI assistants)
+3. **Настройте протоколы ИИ** - Настройте правила для вашего ИИ-ассистента  
+   → `networkguide.mdc` и `networkteam.mdc` (разместите в `.cursor/rules/` для Cursor, или в соответствующей директории правил для других ИИ-ассистентов)
 
-4. **Start building** - Document your first device
+4. **Начните строить** - Задокументируйте ваше первое устройство
 
-**Time to working system: ~1 hour**
-
----
-
-## What's In This Repo
-
-| File | Purpose | Who Reads It |
-|------|---------|--------------|
-| **OVERVIEW.md** | What Vibe Infrastructure is, how it works, why it works | You (first), then optionally your AI |
-| **IMPLEMENTATION_GUIDE.md** | Step-by-step technical implementation | You + AI (to build the system) |
-| **networkguide.mdc** | AI interaction rules and protocols | AI only (core behavior) |
-| **networkteam.mdc** | AI team structure and workflows | AI only (team coordination) |
+**Время до рабочей системы: ~1 час**
 
 ---
 
-## Installation
+## Что в этом репозитории
 
-### For Cursor IDE
+| Файл | Назначение | Кто читает |
+|------|------------|------------|
+| **OVERVIEW.md** | Что такое Vibe Infrastructure, как это работает, почему это работает | Вы (сначала), затем опционально ваш ИИ |
+| **IMPLEMENTATION_GUIDE.md** | Пошаговая техническая реализация | Вы + ИИ (для построения системы) |
+| **networkguide.mdc** | Правила и протоколы взаимодействия с ИИ | Только ИИ (основное поведение) |
+| **networkteam.mdc** | Структура команды ИИ и рабочие процессы | Только ИИ (координация команды) |
+
+---
+
+## Установка
+
+### Для Cursor IDE
 
 ```bash
-# In your project directory:
+# В директории вашего проекта:
 mkdir -p .cursor/rules
 
-# Copy protocol files from repository (do NOT create new files - these exist in the repo):
+# Скопируйте файлы протоколов из репозитория (НЕ создавайте новые файлы - они уже есть в репозитории):
 cp networkguide.mdc .cursor/rules/
 cp networkteam.mdc .cursor/rules/
 
-# Create complete directory structure:
+# Создайте полную структуру директорий:
 mkdir -p docs/network/configs
 mkdir -p docs/{devices,servers,services}
 mkdir -p inventory scripts diagnostics
 ```
 
-Then tell Cursor: *"Help me set up Vibe Infrastructure. I've loaded the protocol files in `.cursor/rules/`. I have a [router brand] at [IP] to start with."*
+Затем скажите Cursor: *"Помоги мне настроить Vibe Infrastructure. Я загрузил файлы протоколов в `.cursor/rules/`. У меня есть [марка роутера] по адресу [IP] для начала."*
 
-### For Antigravity
+### Для Antigravity
 
-Antigravity uses the same `.mdc` rule format as Cursor and automatically detects rules in the `.cursor/rules/` directory. The setup is identical to Cursor:
+Antigravity использует тот же формат правил `.mdc`, что и Cursor, и автоматически обнаруживает правила в директории `.cursor/rules/`. Настройка идентична Cursor:
 
 ```bash
-# In your project directory:
+# В директории вашего проекта:
 mkdir -p .cursor/rules
 
-# Copy protocol files from repository (do NOT create new files - these exist in the repo):
+# Скопируйте файлы протоколов из репозитория (НЕ создавайте новые файлы - они уже есть в репозитории):
 cp networkguide.mdc .cursor/rules/
 cp networkteam.mdc .cursor/rules/
 
-# Create complete directory structure:
+# Создайте полную структуру директорий:
 mkdir -p docs/network/configs
 mkdir -p docs/{devices,servers,services}
 mkdir -p inventory scripts diagnostics
 ```
 
-**Key Difference**: Antigravity automatically indexes the `.cursor/rules/` directory when it initializes a workspace. The `alwaysApply: true` flag in `networkguide.mdc` ensures the AI assumes its Service Delivery Manager role at the start of every new chat—no manual prompting needed.
+**Ключевое отличие**: Antigravity автоматически индексирует директорию `.cursor/rules/` при инициализации рабочего пространства. Флаг `alwaysApply: true` в `networkguide.mdc` гарантирует, что ИИ принимает роль Service Delivery Manager в начале каждого нового чата — ручное напоминание не требуется.
 
-**Verification**: Ask Antigravity "What is your core workflow?" It should respond with the **Verify → Research → Plan → Execute → Document** protocol defined in the rules.
+**Проверка**: Спросите Antigravity "Какой у тебя основной рабочий процесс?" Он должен ответить протоколом **Проверить → Исследовать → Планировать → Выполнить → Документировать**, определённым в правилах.
 
-### For Other AI Assistants
+### Для других ИИ-ассистентов
 
-- Set up both `.mdc` files as rules (check your AI assistant's documentation for the exact rules directory location)
-- Ensure your AI has: file read/write, command execution, SSH access (if managing remote devices)
-- Follow the Implementation Guide to create directory structure
+- Настройте оба файла `.mdc` как правила (проверьте документацию вашего ИИ-ассистента для точного расположения директории правил)
+- Убедитесь, что ваш ИИ имеет: чтение/запись файлов, выполнение команд, доступ SSH (если управляете удалёнными устройствами)
+- Следуйте Руководству по реализации для создания структуры директорий
 
 ---
 
-## How It Works
+## Как это работает
 
-### Documentation as Infrastructure
+### Документация как инфраструктура
 
-Every device, service, and configuration is documented in structured markdown and YAML files. This documentation IS your infrastructure—not a description of it.
+Каждое устройство, сервис и конфигурация документируются в структурированных файлах markdown и YAML. Эта документация И ЕСТЬ ваша инфраструктура — а не описание её.
 
 ```
 HomeNetwork/
 ├── docs/
-│   ├── network/          # Topology, VLANs, routing
-│   │   └── configs/      # Configuration backups
-│   ├── devices/          # Router, switches, APs
-│   ├── servers/          # NAS, servers
-│   └── services/         # Docker containers, apps
-├── inventory/            # YAML: devices, IPs, services
-└── scripts/              # Automation scripts
+│   ├── network/          # Топология, VLAN, маршрутизация
+│   │   └── configs/      # Резервные копии конфигураций
+│   ├── devices/          # Роутер, коммутаторы, точки доступа
+│   ├── servers/          # NAS, серверы
+│   └── services/         # Docker-контейнеры, приложения
+├── inventory/            # YAML: устройства, IP, сервисы
+└── scripts/              # Скрипты автоматизации
 ```
 
-### AI Team Model
+### Модель команды ИИ
 
-The AI operates as a professional IT services company with specialized roles:
-- **Service Delivery Manager** - Coordinates all work
-- **Senior Network Engineer** - Routing, switching, VLANs
-- **Senior DevOps Engineer** - Containers, orchestration
-- **Storage Systems Administrator** - NAS, storage
-- **Network Security Engineer** - Firewalls, security
-- **IoT & Automation Engineer** - Smart home devices
-- *+ 3 more specialists*
+ИИ работает как профессиональная IT-сервисная компания со специализированными ролями:
+- **Service Delivery Manager** - Координирует всю работу
+- **Senior Network Engineer** - Маршрутизация, коммутация, VLAN
+- **Senior DevOps Engineer** - Контейнеры, оркестрация
+- **Storage Systems Administrator** - NAS, хранилище
+- **Network Security Engineer** - Файрволы, безопасность
+- **IoT & Automation Engineer** - Устройства умного дома
+- *+ ещё 3 специалиста*
 
-The team coordinates **internally**—you just see results.
+Команда координируется **внутренне** — вы видите только результаты.
 
-### Process Over Hardcoding
+### Процесс вместо жёсткого кодирования
 
-The AI never assumes. It always verifies actual state:
+ИИ никогда не предполагает. Он всегда проверяет фактическое состояние:
 
 ```python
-# Traditional automation:
-container_name = "plex"  # Hope this is right
+# Традиционная автоматизация:
+container_name = "plex"  # Надеемся, что это правильно
 docker restart plex
 
 # Vibe Infrastructure:
-containers = run("docker ps --format '{{.Names}}'")  # Check reality
+containers = run("docker ps --format '{{.Names}}'")  # Проверяем реальность
 actual_name = find_container(containers, service="plex")
 if actual_name != documented_name:
-    update_docs(actual_name)  # Self-correct
+    update_docs(actual_name)  # Самокоррекция
 docker restart actual_name
 ```
 
-This dual-check approach (documentation + reality) prevents failures when things drift.
+Этот подход двойной проверки (документация + реальность) предотвращает сбои при расхождении.
 
 ---
 
-## Real-World Example
+## Пример из реальной жизни
 
-**You:** "Can't access Plex—what's wrong?"
+**Вы:** "Не могу получить доступ к Plex — в чём проблема?"
 
-**AI:**  
+**ИИ:**  
 ```
-[Checks documentation for Plex service]
-[Verifies container status: docker ps]
-[Reviews recent changes]
+[Проверяет документацию для сервиса Plex]
+[Проверяет статус контейнера: docker ps]
+[Просматривает недавние изменения]
 
-Found the issue - container is running but port mapping is incorrect.
+Найдена проблема - контейнер работает, но маппинг портов неверный.
 
-[Updates docker-compose.yml]
-[Recreates container]
-[Tests accessibility]
+[Обновляет docker-compose.yml]
+[Пересоздаёт контейнер]
+[Проверяет доступность]
 
-✓ Plex accessible at https://plex.yourdomain.com
-✓ Documentation updated
-✓ Added to troubleshooting guide
-```
-
-All conversational. No scripts to write. No configuration to remember.
-
----
-
-## What Makes This Different
-
-| Traditional | Vibe Infrastructure |
-|-------------|---------------------|
-| Documentation gets outdated | Documentation is always current (AI maintains it) |
-| Scripts/automation break when things change | Self-corrects by verifying actual state |
-| Knowledge lives in your head | Knowledge lives in documentation, builds over time |
-| Complex tools for simple tasks | Natural language for everything |
-| Always-on monitoring overhead | On-demand, zero overhead when idle |
-
----
-
-## Key Features
-
-✅ **Conversational Interface** - Plain English, no special syntax  
-✅ **Self-Documenting** - AI maintains docs as it works  
-✅ **Self-Correcting** - Detects drift between docs and reality  
-✅ **Self-Improving** - Learns patterns, gets better over time  
-✅ **On-Demand** - Activates when needed, zero overhead otherwise  
-✅ **Professional Standards** - IT service company workflows at home scale  
-✅ **Change Management** - Backups, verification, rollback plans  
-✅ **Multi-Specialist** - 8 specialized AI experts coordinate internally  
-
----
-
-## Requirements
-
-**Your Network:**
-- At least a router (to document)
-- SSH access to devices (optional, for remote management)
-- Docker (optional, for container management)
-
-**Your AI Assistant:**
-- File read/write capabilities
-- Command execution (bash, SSH)
-- 100K+ token context window (most modern AIs)
-
-**You:**
-- Basic understanding of your network
-- Willingness to answer questions during setup
-- Patience as system builds knowledge (first 5-10 tasks)
-
----
-
-## Example Use Cases
-
-### Simple Status Checks
-```
-"Is the media server running?"
-"Check if all containers are healthy"
-"What's using all the disk space?"
+✓ Plex доступен по адресу https://plex.yourdomain.com
+✓ Документация обновлена
+✓ Добавлено в руководство по устранению неполадок
 ```
 
-### Troubleshooting
+Всё через разговор. Никаких скриптов для написания. Никаких конфигураций для запоминания.
+
+---
+
+## Что делает это особенным
+
+| Традиционный подход | Vibe Infrastructure |
+|---------------------|---------------------|
+| Документация устаревает | Документация всегда актуальна (ИИ поддерживает её) |
+| Скрипты/автоматизация ломаются при изменениях | Самокорректируется, проверяя фактическое состояние |
+| Знания живут в вашей голове | Знания живут в документации, накапливаются со временем |
+| Сложные инструменты для простых задач | Естественный язык для всего |
+| Постоянный мониторинг с накладными расходами | По требованию, нулевые накладные расходы в простое |
+
+---
+
+## Ключевые возможности
+
+✅ **Разговорный интерфейс** - Простой язык, без специального синтаксиса  
+✅ **Самодокументирование** - ИИ поддерживает документацию во время работы  
+✅ **Самокорректирование** - Обнаруживает расхождения между документацией и реальностью  
+✅ **Самоулучшение** - Изучает паттерны, становится лучше со временем  
+✅ **По требованию** - Активируется при необходимости, нулевые накладные расходы в остальное время  
+✅ **Профессиональные стандарты** - Рабочие процессы IT-сервисной компании в масштабе дома  
+✅ **Управление изменениями** - Резервные копии, проверка, планы отката  
+✅ **Мультиспециалист** - 8 специализированных экспертов ИИ координируются внутренне  
+
+---
+
+## Требования
+
+**Ваша сеть:**
+- Как минимум роутер (для документирования)
+- Доступ SSH к устройствам (опционально, для удалённого управления)
+- Docker (опционально, для управления контейнерами)
+
+**Ваш ИИ-ассистент:**
+- Возможности чтения/записи файлов
+- Выполнение команд (bash, SSH)
+- Окно контекста 100K+ токенов (большинство современных ИИ)
+
+**Вы:**
+- Базовое понимание вашей сети
+- Готовность отвечать на вопросы во время настройки
+- Терпение, пока система накапливает знания (первые 5-10 задач)
+
+---
+
+## Примеры использования
+
+### Простые проверки статуса
 ```
-"Can't access file shares from Windows"
-"Why is the network slow?"
-"Camera keeps going offline"
+"Работает ли медиа-сервер?"
+"Проверь, все ли контейнеры здоровы"
+"Что использует всё дисковое пространство?"
 ```
 
-### Configuration Changes
+### Устранение неполадок
 ```
-"Update all Docker containers"
-"Add a new VLAN for IoT devices"
-"Change the WiFi password"
-```
-
-### Documentation Tasks
-```
-"Document my NAS at 192.168.1.200"
-"Create network topology diagram"
-"What services are running on the NAS?"
+"Не могу получить доступ к файловым шаринам с Windows"
+"Почему сеть медленная?"
+"Камера постоянно отключается"
 ```
 
----
+### Изменения конфигурации
+```
+"Обнови все Docker-контейнеры"
+"Добавь новую VLAN для IoT-устройств"
+"Измени пароль WiFi"
+```
 
-## Customization
-
-The protocol files (`networkguide.mdc` and `networkteam.mdc`) are designed to work out-of-the-box but can be customized:
-
-**Safe to customize:**
-- Priority levels (SLA timeframes)
-- Team roles (add/remove specialists)
-- Documentation structure
-- Verification commands
-- Quick diagnosis patterns
-
-**Keep intact (core functionality):**
-- Verification-first principles
-- Change management discipline
-- Response structure
-- Learning mechanisms
-
-As you use the system, it naturally documents YOUR specific hardware—your router model, NAS brand, IoT platform, services, and configurations.
+### Задачи документирования
+```
+"Задокументируй мой NAS по адресу 192.168.1.200"
+"Создай диаграмму топологии сети"
+"Какие сервисы работают на NAS?"
+```
 
 ---
 
-## Troubleshooting
+## Настройка
 
-**AI not following protocols?**
-- Verify protocol files are set up as rules (e.g., in `.cursor/rules/` for Cursor)
-- Check that rules are properly configured in your AI assistant's rules directory
-- Ask: "What are your core workflow steps?" (Should respond: Verify → Research → Plan → Execute → Document)
+Файлы протоколов (`networkguide.mdc` и `networkteam.mdc`) разработаны для работы из коробки, но могут быть настроены:
 
-**Documentation not updating?**
-- Check file write permissions
-- Verify `docs/` directory exists
-- Review recent Git commits to see if changes are being tracked
+**Безопасно настраивать:**
+- Уровни приоритета (временные рамки SLA)
+- Роли команды (добавлять/удалять специалистов)
+- Структуру документации
+- Команды проверки
+- Паттерны быстрой диагностики
 
-**AI not verifying actual state?**
-- Confirm AI has command execution enabled
-- Test: "What containers are running?" (Should run `docker ps`, not guess)
+**Оставить без изменений (основная функциональность):**
+- Принципы проверки в первую очередь
+- Дисциплина управления изменениями
+- Структура ответов
+- Механизмы обучения
 
-See `IMPLEMENTATION_GUIDE.md` for complete troubleshooting section.
-
----
-
-## Limitations
-
-**This is NOT:**
-- ❌ A monitoring system (no 24/7 alerts)
-- ❌ A backup solution (enforces backups, doesn't create them)
-- ❌ Magic (requires accurate initial documentation)
-- ❌ Fully autonomous (you remain in control)
-- ❌ Just documentation (actively manages infrastructure)
-
-**This IS:**
-- ✅ On-demand intelligence
-- ✅ Conversational management
-- ✅ Self-maintaining documentation
-- ✅ Professional workflows at home scale
+По мере использования система естественным образом документирует ВАШЕ конкретное оборудование — модель роутера, марку NAS, платформу IoT, сервисы и конфигурации.
 
 ---
 
-## Philosophy
+## Устранение неполадок
 
-### Documentation as Infrastructure
-Documentation isn't a description of infrastructure—it IS the infrastructure. The AI reads it to understand your network and updates it as things change.
+**ИИ не следует протоколам?**
+- Проверьте, что файлы протоколов настроены как правила (например, в `.cursor/rules/` для Cursor)
+- Убедитесь, что правила правильно настроены в директории правил вашего ИИ-ассистента
+- Спросите: "Какие у тебя основные шаги рабочего процесса?" (Должен ответить: Проверить → Исследовать → Планировать → Выполнить → Документировать)
 
-### Process Over Hardcoding  
-Never assume, always verify. Compare documentation against actual state, self-correct when drift is detected.
+**Документация не обновляется?**
+- Проверьте права на запись файлов
+- Убедитесь, что директория `docs/` существует
+- Просмотрите недавние коммиты Git, чтобы увидеть, отслеживаются ли изменения
 
-### Institutional Knowledge
-Every task builds knowledge:
-- 1st occurrence → Documented in notes
-- 2nd occurrence → Added to troubleshooting
-- 3rd occurrence → Quick diagnosis pattern
+**ИИ не проверяет фактическое состояние?**
+- Подтвердите, что у ИИ включено выполнение команд
+- Тест: "Какие контейнеры работают?" (Должен выполнить `docker ps`, а не угадывать)
 
-Knowledge accumulates, making the system more effective over time.
-
----
-
-## Contributing
-
-Found improvements while using Vibe Infrastructure? Share them!
-
-- Document what you changed in your protocols
-- Note how it improved the system
-- Open an issue or PR with patterns that might help others
-
-This system gets better as people use it and share learnings.
+См. `IMPLEMENTATION_GUIDE.md` для полного раздела по устранению неполадок.
 
 ---
 
-## Credits
+## Ограничения
 
-Vibe Infrastructure combines:
-- Modern AI capabilities (large context windows, function calling, reasoning)
-- Professional IT service company workflows
-- Documentation-as-code principles  
-- Vibe coding philosophy ([Andrej Karpathy, 2025](https://x.com/karpathy/status/1878176549316649299))
+**Это НЕ:**
+- ❌ Система мониторинга (нет круглосуточных оповещений)
+- ❌ Решение для резервного копирования (требует резервные копии, но не создаёт их)
+- ❌ Волшебство (требует точной начальной документации)
+- ❌ Полностью автономное (вы остаётесь под контролем)
+- ❌ Просто документация (активно управляет инфраструктурой)
 
----
-
-## License
-
-The Unlicense (Public Domain) - See LICENSE file
-
----
-
-## Getting Started
-
-1. **Read `OVERVIEW.md`** - Understand the concept (10 min)
-2. **Skim `IMPLEMENTATION_GUIDE.md`** - Technical details (20 min)
-3. **Set up AI protocols** - Set up `networkguide.mdc` and `networkteam.mdc` as rules (5 min)
-4. **Create directory structure** - `docs/`, `inventory/`, etc. (2 min)
-5. **Document first device** - Your router (15 min)
-
-**Total: ~1 hour to working system**
-
-After that, the system builds itself through your interactions. Each task adds knowledge, making future tasks faster and more effective.
+**Это:**
+- ✅ Интеллект по требованию
+- ✅ Управление через разговор
+- ✅ Самоподдерживаемая документация
+- ✅ Профессиональные рабочие процессы в масштабе дома
 
 ---
 
-## Support
+## Философия
 
-- **Issues**: Open an issue for bugs or questions
-- **Discussions**: Share your setup, ask for advice
-- **Wiki**: Community tips and advanced configurations
+### Документация как инфраструктура
+Документация — это не описание инфраструктуры, она И ЕСТЬ инфраструктура. ИИ читает её, чтобы понять вашу сеть, и обновляет её по мере изменений.
+
+### Процесс вместо жёсткого кодирования  
+Никогда не предполагать, всегда проверять. Сравнивать документацию с фактическим состоянием, самокорректироваться при обнаружении расхождений.
+
+### Институциональные знания
+Каждая задача накапливает знания:
+- 1-е появление → Задокументировано в заметках
+- 2-е появление → Добавлено в устранение неполадок
+- 3-е появление → Паттерн быстрой диагностики
+
+Знания накапливаются, делая систему более эффективной со временем.
 
 ---
 
-**Ready to manage your network through conversation?**
+## Вклад в проект
 
-Clone this repo, load the protocols, and start talking to your AI about your network. It's that simple.
+Нашли улучшения при использовании Vibe Infrastructure? Поделитесь ими!
+
+- Задокументируйте, что вы изменили в своих протоколах
+- Отметьте, как это улучшило систему
+- Откройте issue или PR с паттернами, которые могут помочь другим
+
+Эта система становится лучше, когда люди используют её и делятся знаниями.
+
+---
+
+## Благодарности
+
+Vibe Infrastructure объединяет:
+- Современные возможности ИИ (большие окна контекста, вызов функций, рассуждения)
+- Рабочие процессы профессиональной IT-сервисной компании
+- Принципы документации как кода  
+- Философию vibe coding ([Andrej Karpathy, 2025](https://x.com/karpathy/status/1878176549316649299))
+
+---
+
+## Лицензия
+
+The Unlicense (Public Domain) - См. файл LICENSE
+
+---
+
+## Начало работы
+
+1. **Прочитайте `OVERVIEW.md`** - Поймите концепцию (10 мин)
+2. **Просмотрите `IMPLEMENTATION_GUIDE.md`** - Технические детали (20 мин)
+3. **Настройте протоколы ИИ** - Настройте `networkguide.mdc` и `networkteam.mdc` как правила (5 мин)
+4. **Создайте структуру директорий** - `docs/`, `inventory/` и т.д. (2 мин)
+5. **Задокументируйте первое устройство** - Ваш роутер (15 мин)
+
+**Итого: ~1 час до рабочей системы**
+
+После этого система строится сама через ваши взаимодействия. Каждая задача добавляет знания, делая будущие задачи быстрее и эффективнее.
+
+---
+
+## Поддержка
+
+- **Issues**: Откройте issue для багов или вопросов
+- **Discussions**: Поделитесь своей настройкой, спросите совета
+- **Wiki**: Советы сообщества и продвинутые конфигурации
+
+---
+
+**Готовы управлять своей сетью через разговор?**
+
+Клонируйте этот репозиторий, загрузите протоколы и начните разговаривать с вашим ИИ о вашей сети. Это так просто.

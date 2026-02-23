@@ -1,338 +1,338 @@
 # Vibe Infrastructure
 
-**Version 1.0**
+**Версия 1.0**
 
-## How to Use This Documentation
+## Как использовать эту документацию
 
-- **This document** explains what Vibe Infrastructure is, how it works, and why it works
-- **Implementation Guide** (`IMPLEMENTATION_GUIDE.md`) provides technical specifications to build your own system
+- **Этот документ** объясняет, что такое Vibe Infrastructure, как это работает и почему это работает
+- **Руководство по реализации** (`IMPLEMENTATION_GUIDE.md`) предоставляет технические спецификации для построения вашей собственной системы
 
-If you want to understand the concept, read this document.  
-If you want to build it, read both documents and provide them to your AI assistant.
+Если вы хотите понять концепцию, прочитайте этот документ.  
+Если вы хотите построить систему, прочитайте оба документа и предоставьте их вашему ИИ-ассистенту.
 
 ---
 
-## What It Is
+## Что это
 
-Vibe Infrastructure is a system for managing network infrastructure through conversational AI, where documentation serves as the source of truth and natural language is the interface. The system uses an AI team that reads, understands, and maintains documentation while performing infrastructure management tasks.
+Vibe Infrastructure — это система для управления сетевой инфраструктурой через разговорный ИИ, где документация служит источником истины, а естественный язык является интерфейсом. Система использует команду ИИ, которая читает, понимает и поддерживает документацию, выполняя задачи управления инфраструктурой.
 
-Named after "vibe coding" (Karpathy, 2025), extending the concept to infrastructure management. Instead of generating code, the system manages networks, servers, and services through natural language interactions with an AI team that maintains comprehensive documentation as persistent memory.
+Названо в честь "vibe coding" (Karpathy, 2025), расширяя концепцию до управления инфраструктурой. Вместо генерации кода система управляет сетями, серверами и сервисами через взаимодействия на естественном языке с командой ИИ, которая поддерживает полную документацию как постоянную память.
 
-## Core Principles
+## Основные принципы
 
-### 1. Documentation as Infrastructure
+### 1. Документация как инфраструктура
 
-Documentation is the infrastructure. Every device, service, configuration, and procedure is documented in a structured, AI-readable format. The documentation serves as:
-- The single source of truth
-- The AI's knowledge base
-- The change management system
-- The troubleshooting guide
-- The historical record
+Документация — это инфраструктура. Каждое устройство, сервис, конфигурация и процедура документируются в структурированном, читаемом для ИИ формате. Документация служит:
+- Единственным источником истины
+- Базой знаний ИИ
+- Системой управления изменениями
+- Руководством по устранению неполадок
+- Исторической записью
 
-### 2. Conversational Interface
+### 2. Разговорный интерфейс
 
-Users interact through natural language. Examples:
-- "Can't access Plex—what's wrong?"
-- "Update all Docker containers to the latest versions"
-- "Why is the NAS slow?"
+Пользователи взаимодействуют через естественный язык. Примеры:
+- "Не могу получить доступ к Plex — в чём проблема?"
+- "Обнови все Docker-контейнеры до последних версий"
+- "Почему NAS медленный?"
 
-The AI understands context, asks clarifying questions, and performs work while maintaining documentation.
+ИИ понимает контекст, задаёт уточняющие вопросы и выполняет работу, поддерживая документацию.
 
-### 3. On-Demand Intelligence
+### 3. Интеллект по требованию
 
-The system activates only when needed. It:
-- Wakes up when you have a question or task
-- Gathers context from documentation
-- Performs the work
-- Updates documentation
-- Goes back to sleep
+Система активируется только при необходимости. Она:
+- Просыпается, когда у вас есть вопрос или задача
+- Собирает контекст из документации
+- Выполняет работу
+- Обновляет документацию
+- Возвращается в спящий режим
 
-No resource consumption when idle.
+Нулевое потребление ресурсов в простое.
 
-### 4. Team-Based Coordination
+### 4. Координация на основе команды
 
-Specialized AI experts collaborate internally:
-- **Service Delivery Manager** (coordinates all work)
-- **Senior Network Engineer** (routing, switching, VLANs)
-- **Senior DevOps Engineer** (containers, orchestration)
-- **Storage Systems Administrator** (NAS, storage)
-- **Network Security Engineer** (security, firewalls)
-- **IoT & Automation Engineer** (smart home devices)
+Специализированные эксперты ИИ сотрудничают внутренне:
+- **Service Delivery Manager** (координирует всю работу)
+- **Senior Network Engineer** (маршрутизация, коммутация, VLAN)
+- **Senior DevOps Engineer** (контейнеры, оркестрация)
+- **Storage Systems Administrator** (NAS, хранилище)
+- **Network Security Engineer** (безопасность, файрволы)
+- **IoT & Automation Engineer** (устройства умного дома)
 
-The team coordinates internally; users see results, not coordination. See Implementation Guide for complete role definitions and workflows.
+Команда координируется внутренне; пользователи видят результаты, а не координацию. См. Руководство по реализации для полных определений ролей и рабочих процессов.
 
-### 5. Process Over Hardcoding
+### 5. Процесс вместо жёсткого кодирования
 
-The system verifies actual state rather than assuming. It:
-- Checks actual container names: `docker ps --format "{{.Names}}"`
-- Verifies SSH users: checks docs, then confirms with `whoami`
-- Validates service status: checks reality before troubleshooting
-- Compares documentation vs. actual state
+Система проверяет фактическое состояние, а не предполагает. Она:
+- Проверяет фактические имена контейнеров: `docker ps --format "{{.Names}}"`
+- Проверяет пользователей SSH: проверяет документацию, затем подтверждает с `whoami`
+- Проверяет статус сервиса: проверяет реальность перед устранением неполадок
+- Сравнивает документацию с фактическим состоянием
 
-This dual-check approach (docs + actual state) prevents failures when documentation drifts from reality. If docs say container is named "plex" but `docker ps` shows "plex-media-server", the system discovers and corrects this automatically.
+Этот подход двойной проверки (документация + фактическое состояние) предотвращает сбои, когда документация расходится с реальностью. Если в документации указано, что контейнер называется "plex", но `docker ps` показывает "plex-media-server", система обнаруживает и исправляет это автоматически.
 
-### 6. Self-Improving System
+### 6. Самоулучшающаяся система
 
-The system learns from every task:
-- **1st occurrence** → Documented in service notes
-- **2nd occurrence** → Added to troubleshooting section
-- **3rd occurrence** → Becomes a quick diagnosis pattern
+Система учится на каждой задаче:
+- **1-е появление** → Задокументировано в заметках сервиса
+- **2-е появление** → Добавлено в раздел устранения неполадок
+- **3-е появление** → Становится паттерном быстрой диагностики
 
-Institutional knowledge builds over time, making future interactions faster and more accurate.
+Институциональные знания накапливаются со временем, делая будущие взаимодействия быстрее и точнее.
 
-### 7. Professional Change Management
+### 7. Профессиональное управление изменениями
 
-The system follows professional IT service company standards:
-- **SLA-based priorities**: CRITICAL → URGENT → HIGH → MEDIUM → LOW
-- **Change management**: Backup → Plan → Execute → Verify → Document
-- **Security review**: All changes assessed for security impact
-- **Rollback planning**: Every change has a documented rollback path
+Система следует стандартам профессиональной IT-сервисной компании:
+- **Приоритеты на основе SLA**: CRITICAL → URGENT → HIGH → MEDIUM → LOW
+- **Управление изменениями**: Резервная копия → План → Выполнение → Проверка → Документирование
+- **Проверка безопасности**: Все изменения оцениваются на влияние безопасности
+- **Планирование отката**: Каждое изменение имеет задокументированный путь отката
 
-Solutions remain practical for home networks—no enterprise complexity where not needed.
+Решения остаются практичными для домашних сетей — без корпоративной сложности, где она не нужна.
 
-## How It Works
+## Как это работает
 
-### Interaction Flow
+### Поток взаимодействия
 
 ```
-User: "Plex isn't working"
+Пользователь: "Plex не работает"
     ↓
-AI: [Gathers context]
-    - Checks documentation for Plex service
-    - Verifies container status: docker ps
-    - Reviews recent changes in docs
-    - Checks for similar past issues
+ИИ: [Собирает контекст]
+    - Проверяет документацию для сервиса Plex
+    - Проверяет статус контейнера: docker ps
+    - Просматривает недавние изменения в документации
+    - Проверяет похожие прошлые проблемы
     ↓
-AI: [Diagnoses]
-    - Container is running but port mapping incorrect
-    - Engages DevOps Engineer internally
-    - Plans fix with rollback option
+ИИ: [Диагностирует]
+    - Контейнер работает, но маппинг портов неверный
+    - Внутренне привлекает DevOps Engineer
+    - Планирует исправление с опцией отката
     ↓
-AI: [Fixes]
-    - Updates docker-compose.yml
-    - Recreates container
-    - Verifies functionality
+ИИ: [Исправляет]
+    - Обновляет docker-compose.yml
+    - Пересоздаёт контейнер
+    - Проверяет функциональность
     ↓
-AI: [Documents]
-    - Updates docs/services/plex.md
-    - Records solution in troubleshooting section
-    - Notes pattern if recurring
+ИИ: [Документирует]
+    - Обновляет docs/services/plex.md
+    - Записывает решение в раздел устранения неполадок
+    - Отмечает паттерн, если повторяется
     ↓
-AI: "Fixed! Container recreated with correct port mapping.
-     ✓ Plex accessible at https://plex.example.com
-     ✓ Documentation updated"
+ИИ: "Исправлено! Контейнер пересоздан с правильным маппингом портов.
+     ✓ Plex доступен по адресу https://plex.example.com
+     ✓ Документация обновлена"
 ```
 
-### Documentation Structure
+### Структура документации
 
 ```
 HomeNetwork/
 ├── docs/
-│   ├── network/          # Topology, VLANs, routing
-│   ├── devices/          # Router, switches, APs
-│   ├── servers/          # NAS, compute hosts
-│   └── services/         # Docker containers, applications
-├── inventory/            # YAML: devices, IPs, services
-├── scripts/              # Automation scripts
-└── rules/                # AI team protocols
+│   ├── network/          # Топология, VLAN, маршрутизация
+│   ├── devices/          # Роутер, коммутаторы, точки доступа
+│   ├── servers/          # NAS, вычислительные хосты
+│   └── services/         # Docker-контейнеры, приложения
+├── inventory/            # YAML: устройства, IP, сервисы
+├── scripts/              # Скрипты автоматизации
+└── rules/                # Протоколы команды ИИ
 ```
 
-Every device, service, and configuration is documented. The AI reads this to understand the network and updates it as things change.
+Каждое устройство, сервис и конфигурация документируются. ИИ читает это, чтобы понять сеть, и обновляет по мере изменений.
 
-## Why It Works
+## Почему это работает
 
-### Technical Prerequisites
+### Технические предпосылки
 
-Vibe Infrastructure is possible because of recent AI capabilities:
+Vibe Infrastructure возможна благодаря недавним возможностям ИИ:
 
-1. **Large Context Windows**: Modern AI can hold 200K+ tokens—enough for comprehensive network documentation in a single conversation
-2. **Function Calling**: AI can execute commands, read files, and interact with systems reliably
-3. **Reasoning Capability**: AI can understand network topology, diagnose issues, and follow complex troubleshooting procedures
-4. **Natural Language Understanding**: No special syntax needed—plain English descriptions work
-5. **Persistent Memory**: Documentation provides context across sessions, solving the "forgetful AI" problem
+1. **Большие окна контекста**: Современный ИИ может удерживать 200K+ токенов — достаточно для полной сетевой документации в одном разговоре
+2. **Вызов функций**: ИИ может выполнять команды, читать файлы и взаимодействовать с системами надёжно
+3. **Способность к рассуждению**: ИИ может понимать топологию сети, диагностировать проблемы и следовать сложным процедурам устранения неполадок
+4. **Понимание естественного языка**: Не нужен специальный синтаксис — работают простые описания на естественном языке
+5. **Постоянная память**: Документация предоставляет контекст между сеансами, решая проблему "забывчивого ИИ"
 
-### Verification Prevents Failures
+### Проверка предотвращает сбои
 
-The "Process Over Hardcoding" principle addresses a fundamental problem: documentation drifts from reality over time. Traditional systems fail when this happens. Vibe Infrastructure detects drift immediately by always checking actual state, then self-corrects by updating documentation to match reality.
+Принцип "Процесс вместо жёсткого кодирования" решает фундаментальную проблему: документация со временем расходится с реальностью. Традиционные системы терпят неудачу, когда это происходит. Vibe Infrastructure немедленно обнаруживает расхождение, всегда проверяя фактическое состояние, затем самокорректируется, обновляя документацию в соответствии с реальностью.
 
-### Team Model Prevents Knowledge Gaps
+### Модель команды предотвращает пробелы в знаниях
 
-Rather than a single AI trying to know everything, specialized experts collaborate. Each expert has defined expertise areas and quality standards, preventing knowledge gaps that would occur with a single generalist.
+Вместо одного ИИ, пытающегося знать всё, специализированные эксперты сотрудничают. Каждый эксперт имеет определённые области экспертизы и стандарты качества, предотвращая пробелы в знаниях, которые возникли бы с одним универсалом.
 
-### Self-Improvement Through Documentation
+### Самоулучшение через документацию
 
-Every interaction enhances the system. Patterns emerge over time:
-- First occurrence is documented
-- Second occurrence becomes a troubleshooting pattern
-- Third occurrence becomes a quick diagnosis pattern
+Каждое взаимодействие улучшает систему. Паттерны появляются со временем:
+- Первое появление документируется
+- Второе появление становится паттерном устранения неполадок
+- Третье появление становится паттерном быстрой диагностики
 
-This builds institutional knowledge that makes the system more effective over time.
+Это создаёт институциональные знания, которые делают систему более эффективной со временем.
 
-## Real-World Example
+## Пример из реальной жизни
 
-This system is based on a working implementation managing a home network with:
-- EdgeRouter X with multiple VLANs
-- QNAP NAS for storage
-- Ubuntu server hosting 20+ Docker services
-- UniFi access points
-- Hubitat IoT automation
+Эта система основана на рабочей реализации, управляющей домашней сетью с:
+- EdgeRouter X с несколькими VLAN
+- QNAP NAS для хранилища
+- Ubuntu сервер, хостинг 20+ Docker-сервисов
+- UniFi точки доступа
+- Hubitat IoT автоматизация
 - WireGuard VPN
 
-In 6+ months of active use, the system has successfully:
-- Troubleshot container networking issues
-- Migrated services from NAS to dedicated server
-- Updated containers while maintaining documentation
-- Diagnosed and fixed GPU access problems
-- Managed VLAN configurations
-- And hundreds of other tasks
+За 6+ месяцев активного использования система успешно:
+- Устраняла проблемы сетевого взаимодействия контейнеров
+- Мигрировала сервисы с NAS на выделенный сервер
+- Обновляла контейнеры, поддерживая документацию
+- Диагностировала и исправляла проблемы доступа к GPU
+- Управляла конфигурациями VLAN
+- И сотни других задач
 
-All through conversational interactions, with documentation automatically maintained.
+Всё через разговорные взаимодействия, с автоматически поддерживаемой документацией.
 
-## What It Is Not
+## Чем это не является
 
-### Not a Monitoring System
+### Не система мониторинга
 
-Vibe Infrastructure is on-demand. It activates when needed, performs work, and goes back to sleep. Zero overhead when idle. Unlike AIOps or monitoring systems, there's no resource consumption, alert fatigue, or maintenance burden when not actively using it.
+Vibe Infrastructure работает по требованию. Она активируется при необходимости, выполняет работу и возвращается в спящий режим. Нулевые накладные расходы в простое. В отличие от AIOps или систем мониторинга, нет потребления ресурсов, усталости от оповещений или бремени обслуживания, когда вы не используете её активно.
 
-### Not a Replacement for Backups
+### Не замена резервного копирования
 
-The system enforces backup practices—it verifies backups exist before changes and creates new ones when needed. But regular automated backups, off-site storage, and tested restore procedures are still required.
+Система требует практики резервного копирования — она проверяет наличие резервных копий перед изменениями и создаёт новые при необходимости. Но регулярные автоматические резервные копии, офф-сайт хранилище и протестированные процедуры восстановления всё ещё требуются.
 
-### Not Magic
+### Не волшебство
 
-The system uses verification-first principles. It checks actual state before assuming, compares documentation vs. reality, and self-corrects when it finds discrepancies. But it's not omniscient. It needs:
-- Accurate initial documentation
-- Access to systems (SSH, web UI, etc.)
-- User input when context is unclear
+Система использует принципы проверки в первую очередь. Она проверяет фактическое состояние перед предположениями, сравнивает документацию с реальностью и самокорректируется при обнаружении расхождений. Но она не всеведуща. Ей нужно:
+- Точная начальная документация
+- Доступ к системам (SSH, веб-интерфейс и т.д.)
+- Ввод пользователя, когда контекст неясен
 
-### Not Fully Autonomous
+### Не полностью автономная
 
-Users remain in control. The AI asks clarifying questions when needed, proposes changes for approval on major changes, requires input for decisions, and performs work you request, not work it invents.
+Пользователи остаются под контролем. ИИ задаёт уточняющие вопросы при необходимости, предлагает изменения для одобрения при крупных изменениях, требует ввода для решений и выполняет работу, которую вы запрашиваете, а не работу, которую он изобретает.
 
-### Not Just Documentation
+### Не просто документация
 
-Documentation is the medium, not the purpose. Vibe Infrastructure actively manages infrastructure through documentation, performs troubleshooting and fixes, updates configurations, and maintains knowledge that improves over time.
+Документация — это среда, а не цель. Vibe Infrastructure активно управляет инфраструктурой через документацию, выполняет устранение неполадок и исправления, обновляет конфигурации и поддерживает знания, которые улучшаются со временем.
 
-## Scalability and Modularity
+## Масштабируемость и модульность
 
-### Infrastructure-Focused
+### Фокус на инфраструктуре
 
-Vibe Infrastructure specializes in managing technical infrastructure: network devices, servers, storage, containers, IoT systems, and services that can be controlled via SSH, APIs, or web interfaces.
+Vibe Infrastructure специализируется на управлении технической инфраструктурой: сетевыми устройствами, серверами, хранилищем, контейнерами, IoT-системами и сервисами, которыми можно управлять через SSH, API или веб-интерфейсы.
 
-**Current scope**: This implementation focuses on infrastructure management. The paradigm can extend to other domains (see "The Paradigm is Universal" below), but this documentation describes the infrastructure-focused implementation.
+**Текущий охват**: Эта реализация фокусируется на управлении инфраструктурой. Парадигма может распространяться на другие области (см. "Парадигма универсальна" ниже), но эта документация описывает реализацию, сфокусированную на инфраструктуре.
 
-### The Paradigm is Universal
+### Парадигма универсальна
 
-The principles demonstrated here—documentation as infrastructure, conversational AI management, verification-first approach—can be applied to any manageable system or documentation-worthy domain.
+Принципы, продемонстрированные здесь — документация как инфраструктура, разговорное управление ИИ, подход проверки в первую очередь — могут быть применены к любой управляемой системе или области, достойной документирования.
 
-### Modular by Design
+### Модульная по дизайну
 
-Vibe Infrastructure can operate:
+Vibe Infrastructure может работать:
 
-- **Standalone**: Complete infrastructure management in one system (current implementation)
-- **Federated**: Multiple instances managing different infrastructure domains
-  - Example: Vibe.Home (home network), Vibe.Web (public servers), Vibe.IoT (smart home)
-- **Coordinated**: As one system in a larger multi-domain platform
-  - Higher-level orchestrator routes queries to appropriate system
-  - Systems can reference each other's documentation
-  - Cross-system coordination when needed
-- **Documentation-Only Systems**: Following the same paradigm but without control capabilities
-  - Maintain documentation in the same structure
-  - Tracked and queried through conversational AI
-  - Can be managed alongside control-capable systems
+- **Автономно**: Полное управление инфраструктурой в одной системе (текущая реализация)
+- **Федеративно**: Несколько экземпляров, управляющих разными доменами инфраструктуры
+  - Пример: Vibe.Home (домашняя сеть), Vibe.Web (публичные серверы), Vibe.IoT (умный дом)
+- **Координированно**: Как одна система в более крупной мультидоменной платформе
+  - Оркестратор более высокого уровня направляет запросы в соответствующую систему
+  - Системы могут ссылаться на документацию друг друга
+  - Межсистемная координация при необходимости
+- **Только документация**: Следуя той же парадигме, но без возможностей управления
+  - Поддерживать документацию в той же структуре
+  - Отслеживать и запрашивать через разговорный ИИ
+  - Может управляться вместе с системами с возможностями управления
 
-## Comparison to Alternatives
+## Сравнение с альтернативами
 
 ### vs. Infrastructure as Code (IaC)
 
-- **IaC**: Code defines infrastructure → Terraform/Ansible → Deploy
-- **Vibe Infrastructure**: Documentation defines infrastructure → AI manages → Conversational
+- **IaC**: Код определяет инфраструктуру → Terraform/Ansible → Развёртывание
+- **Vibe Infrastructure**: Документация определяет инфраструктуру → ИИ управляет → Разговорный
 
-IaC is declarative code. Vibe Infrastructure is conversational documentation.
+IaC — это декларативный код. Vibe Infrastructure — это разговорная документация.
 
-### vs. AIOps / Monitoring Systems
+### vs. AIOps / Системы мониторинга
 
-- **AIOps**: 24/7 monitoring → Alerts → Automated responses
-- **Vibe Infrastructure**: On-demand activation → Context gathering → Conversational management
+- **AIOps**: Круглосуточный мониторинг → Оповещения → Автоматические ответы
+- **Vibe Infrastructure**: Активация по требованию → Сбор контекста → Разговорное управление
 
-AIOps is always-on monitoring. Vibe Infrastructure is on-demand intelligence.
+AIOps — это постоянный мониторинг. Vibe Infrastructure — это интеллект по требованию.
 
-### vs. Traditional Documentation
+### vs. Традиционная документация
 
-- **Traditional**: Documentation is reference material (often outdated)
-- **Vibe Infrastructure**: Documentation is the active system (always current)
+- **Традиционная**: Документация — это справочный материал (часто устаревший)
+- **Vibe Infrastructure**: Документация — это активная система (всегда актуальная)
 
-Traditional docs are passive. Vibe Infrastructure docs are active and self-maintaining.
+Традиционная документация пассивна. Документация Vibe Infrastructure активна и самоподдерживаема.
 
-### vs. ChatOps / Slack Bots
+### vs. ChatOps / Slack боты
 
-- **ChatOps**: Chat interface to run scripts/commands
-- **Vibe Infrastructure**: Conversational interface to AI team that understands context
+- **ChatOps**: Интерфейс чата для запуска скриптов/команд
+- **Vibe Infrastructure**: Разговорный интерфейс к команде ИИ, которая понимает контекст
 
-ChatOps executes commands. Vibe Infrastructure understands and manages.
+ChatOps выполняет команды. Vibe Infrastructure понимает и управляет.
 
-## Implementation Requirements
+## Требования к реализации
 
-To implement Vibe Infrastructure, you need:
+Для реализации Vibe Infrastructure вам нужно:
 
-1. **Structured Documentation Repository**
-   - Markdown files for devices, servers, services
-   - YAML inventories for structured data
-   - Clear organization and naming conventions
+1. **Структурированный репозиторий документации**
+   - Markdown файлы для устройств, серверов, сервисов
+   - YAML инвентари для структурированных данных
+   - Чёткая организация и соглашения об именовании
 
-2. **AI Assistant with Capabilities**
-   - File read/write access
-   - Command execution (local and remote SSH)
-   - Network access (HTTP, SSH)
-   - Version control (Git) for history
+2. **ИИ-ассистент с возможностями**
+   - Доступ на чтение/запись файлов
+   - Выполнение команд (локальное и удалённое SSH)
+   - Сетевой доступ (HTTP, SSH)
+   - Контроль версий (Git) для истории
 
-3. **Team Protocol Definition**
-   - Expert roles and responsibilities
-   - Coordination workflows
-   - Quality standards
-   - Change management policies
+3. **Определение протокола команды**
+   - Роли экспертов и ответственность
+   - Рабочие процессы координации
+   - Стандарты качества
+   - Политики управления изменениями
 
-4. **Verification Processes**
-   - Commands to check actual state
-   - Comparison with documentation
-   - Self-correction mechanisms
+4. **Процессы проверки**
+   - Команды для проверки фактического состояния
+   - Сравнение с документацией
+   - Механизмы самокоррекции
 
-See the Implementation Guide for detailed technical specifications.
+См. Руководство по реализации для подробных технических спецификаций.
 
-## References
+## Ссылки
 
-- **Vibe Coding**: AI-assisted development through natural language (Andrej Karpathy, 2025)
-- **Infrastructure as Code**: Managing infrastructure through code (Terraform, Ansible)
-- **AIOps**: AI for IT operations and monitoring
-- **ChatOps**: Managing operations through chat interfaces
+- **Vibe Coding**: Разработка с помощью ИИ через естественный язык (Andrej Karpathy, 2025)
+- **Infrastructure as Code**: Управление инфраструктурой через код (Terraform, Ansible)
+- **AIOps**: ИИ для IT-операций и мониторинга
+- **ChatOps**: Управление операциями через интерфейсы чата
 
-## Quick Reference
+## Быстрая справка
 
-### Key Commands for AI
-- Verify container: `docker ps --format "{{.Names}}\t{{.Status}}"`
-- Check service: `systemctl status <service>`
-- SSH verify: `ssh user@host "whoami"`
-- Find compose: `find ~/dockers -name "docker-compose.yml"`
+### Ключевые команды для ИИ
+- Проверить контейнер: `docker ps --format "{{.Names}}\t{{.Status}}"`
+- Проверить сервис: `systemctl status <service>`
+- Проверить SSH: `ssh user@host "whoami"`
+- Найти compose: `find ~/dockers -name "docker-compose.yml"`
 
-### Documentation Paths
-- Devices: `docs/devices/{device}.md`
-- Servers: `docs/servers/{server}.md`
-- Services: `docs/services/{service}.md`
-- Topology: `docs/network/topology.md`
-- Inventory: `inventory/*.yaml`
+### Пути документации
+- Устройства: `docs/devices/{device}.md`
+- Серверы: `docs/servers/{server}.md`
+- Сервисы: `docs/services/{service}.md`
+- Топология: `docs/network/topology.md`
+- Инвентарь: `inventory/*.yaml`
 
-### Core Workflow
-1. Verify actual state
-2. Research documentation
-3. Plan change
-4. Execute
-5. Document
+### Основной рабочий процесс
+1. Проверить фактическое состояние
+2. Исследовать документацию
+3. Планировать изменение
+4. Выполнить
+5. Задокументировать
 
-### Priority Levels
+### Уровни приоритета
 CRITICAL > URGENT > HIGH > MEDIUM > LOW
 
 ---
 
-## Credits
+## Благодарности
 
-This system is based on the **HomeNetwork** project—a working implementation of Vibe Infrastructure principles. The system manages a complex home network through conversational AI, demonstrating that this approach is practical and effective.
+Эта система основана на проекте **HomeNetwork** — рабочей реализации принципов Vibe Infrastructure. Система управляет сложной домашней сетью через разговорный ИИ, демонстрируя, что этот подход практичен и эффективен.

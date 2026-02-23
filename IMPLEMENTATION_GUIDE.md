@@ -1,364 +1,364 @@
-# Vibe Infrastructure: Implementation Guide
+# Vibe Infrastructure: Руководство по реализации
 
-**Version 1.0** | **Companion to OVERVIEW.md**
+**Версия 1.0** | **Сопровождает OVERVIEW.md**
 
-This document provides the technical specifications needed to implement a Vibe Infrastructure system. An AI assistant reading this document should be able to set up the initial system and ask appropriate questions to complete the implementation.
+Этот документ предоставляет технические спецификации, необходимые для реализации системы Vibe Infrastructure. ИИ-ассистент, читающий этот документ, должен быть способен настроить начальную систему и задать соответствующие вопросы для завершения реализации.
 
-## Prerequisites
+## Предварительные требования
 
-### Required Capabilities
+### Необходимые возможности
 
-The AI assistant must have:
-- File read/write access
-- Command execution (local and remote SSH)
-- Network access (HTTP, SSH)
-- Version control (Git) for history (recommended)
+ИИ-ассистент должен иметь:
+- Доступ на чтение/запись файлов
+- Выполнение команд (локальное и удалённое SSH)
+- Сетевой доступ (HTTP, SSH)
+- Контроль версий (Git) для истории (рекомендуется)
 
-### User Requirements
+### Требования к пользователю
 
-The user must have:
-- SSH access to network devices (if AI will manage them)
-- Basic understanding of their network infrastructure
-- AI assistant with the capabilities listed above
+Пользователь должен иметь:
+- Доступ SSH к сетевым устройствам (если ИИ будет управлять ими)
+- Базовое понимание своей сетевой инфраструктуры
+- ИИ-ассистент с возможностями, перечисленными выше
 
-## Directory Structure
+## Структура директорий
 
-Create the following directory structure. This structure is required—the AI expects these paths:
+Создайте следующую структуру директорий. Эта структура обязательна — ИИ ожидает эти пути:
 
 ```
 HomeNetwork/
 ├── docs/
-│   ├── network/          # Network topology, VLANs, routing (DIRECTORY)
-│   │   ├── topology.md   # Network topology file (NOT docs/topology.md)
-│   │   └── configs/      # Backup configuration files (DIRECTORY)
-│   ├── devices/          # Physical devices directory (contains {device}.md files)
-│   ├── servers/          # Servers directory (contains {server}.md files, NOT docs/servers.md)
-│   └── services/         # Services directory (contains {service}.md files, NOT docs/services.md)
-├── inventory/            # Structured data (YAML files) (DIRECTORY)
-│   ├── devices.yaml      # Device inventory
-│   ├── servers.yaml      # Server inventory
-│   └── services.yaml     # Service inventory (NOT ip_allocation.yaml)
-├── scripts/              # Automation scripts (DIRECTORY)
-├── diagnostics/          # Troubleshooting notes (created as needed) (DIRECTORY)
-└── .cursor/              # AI Configuration (if using Cursor) (DIRECTORY)
-    └── rules/            # AI team protocols (DIRECTORY)
+│   ├── network/          # Топология сети, VLAN, маршрутизация (ДИРЕКТОРИЯ)
+│   │   ├── topology.md   # Файл топологии сети (НЕ docs/topology.md)
+│   │   └── configs/      # Резервные копии файлов конфигурации (ДИРЕКТОРИЯ)
+│   ├── devices/          # Директория физических устройств (содержит файлы {device}.md)
+│   ├── servers/          # Директория серверов (содержит файлы {server}.md, НЕ docs/servers.md)
+│   └── services/         # Директория сервисов (содержит файлы {service}.md, НЕ docs/services.md)
+├── inventory/            # Структурированные данные (YAML файлы) (ДИРЕКТОРИЯ)
+│   ├── devices.yaml      # Инвентарь устройств
+│   ├── servers.yaml      # Инвентарь серверов
+│   └── services.yaml     # Инвентарь сервисов (НЕ ip_allocation.yaml)
+├── scripts/              # Скрипты автоматизации (ДИРЕКТОРИЯ)
+├── diagnostics/          # Заметки по устранению неполадок (создаётся по необходимости) (ДИРЕКТОРИЯ)
+└── .cursor/              # Конфигурация ИИ (если используется Cursor) (ДИРЕКТОРИЯ)
+    └── rules/            # Протоколы команды ИИ (ДИРЕКТОРИЯ)
 ```
 
-**Critical Structure Notes:**
-- Protocol files (`networkguide.mdc`, `networkteam.mdc`) must be **copied from the repository**, not created from scratch
-- `docs/devices/`, `docs/servers/`, and `docs/services/` are **directories** containing individual markdown files (e.g., `docs/devices/router.md`, `docs/servers/nas.md`)
-- `docs/network/` is a **directory** containing `topology.md` (the file must be at `docs/network/topology.md`, NOT `docs/topology.md` at the root)
-- `docs/network/configs/` is a **required subdirectory** for storing configuration backups
-- `inventory/` contains three YAML files: `devices.yaml`, `servers.yaml`, and `services.yaml` (NOT `ip_allocation.yaml`)
-- All directories including `diagnostics/` should be created during initial setup
+**Важные замечания по структуре:**
+- Файлы протоколов (`networkguide.mdc`, `networkteam.mdc`) должны быть **скопированы из репозитория**, а не созданы с нуля
+- `docs/devices/`, `docs/servers/` и `docs/services/` — это **директории**, содержащие отдельные markdown файлы (например, `docs/devices/router.md`, `docs/servers/nas.md`)
+- `docs/network/` — это **директория**, содержащая `topology.md` (файл должен быть в `docs/network/topology.md`, НЕ `docs/topology.md` в корне)
+- `docs/network/configs/` — это **обязательная поддиректория** для хранения резервных копий конфигураций
+- `inventory/` содержит три YAML файла: `devices.yaml`, `servers.yaml` и `services.yaml` (НЕ `ip_allocation.yaml`)
+- Все директории, включая `diagnostics/`, должны быть созданы при первоначальной настройке
 
-**Note**: IP addresses shown in examples throughout this guide (e.g., 192.168.1.1, 192.168.1.200) are placeholder values from the standard private IP range. Replace them with your actual network configuration.
+**Примечание**: IP-адреса, показанные в примерах по всему этому руководству (например, 192.168.1.1, 192.168.1.200), являются значениями-заполнителями из стандартного диапазона частных IP. Замените их на вашу фактическую сетевую конфигурацию.
 
 
-## AI Team Protocol Definition
+## Определение протокола команды ИИ
 
-The AI must be configured with a team protocol that defines roles, workflows, and standards. This protocol should be set up as rules: stored in `.cursor/rules/networkguide.mdc` (for Cursor) or in the appropriate rules directory for other AI assistants (check your AI assistant's documentation for the exact location).
+ИИ должен быть настроен с протоколом команды, который определяет роли, рабочие процессы и стандарты. Этот протокол должен быть настроен как правила: храниться в `.cursor/rules/networkguide.mdc` (для Cursor) или в соответствующей директории правил для других ИИ-ассистентов (проверьте документацию вашего ИИ-ассистента для точного расположения).
 
-### Complete Protocol Files
+### Полные файлы протоколов
 
-The complete AI team protocol is defined in two files:
+Полный протокол команды ИИ определён в двух файлах:
 
-1. **networkguide.mdc** - Interaction guidelines, documentation protocols, verification standards, troubleshooting procedures
-2. **networkteam.mdc** - Team structure, expert roles, coordination workflows, SLA definitions
+1. **networkguide.mdc** - Руководящие принципы взаимодействия, протоколы документации, стандарты проверки, процедуры устранения неполадок
+2. **networkteam.mdc** - Структура команды, роли экспертов, рабочие процессы координации, определения SLA
 
-These files contain the detailed rules that govern how the AI operates. They should be:
-- Placed in `.cursor/rules/` (for Cursor IDE)
-- Set up as rules in the appropriate rules directory for other AI assistants (check your AI assistant's documentation for the exact location)
-- Treated as the "operating manual" for the AI team
+Эти файлы содержат подробные правила, которые управляют работой ИИ. Они должны быть:
+- Размещены в `.cursor/rules/` (для Cursor IDE)
+- Настроены как правила в соответствующей директории правил для других ИИ-ассистентов (проверьте документацию вашего ИИ-ассистента для точного расположения)
+- Рассматриваться как "руководство по эксплуатации" для команды ИИ
 
-**Note**: These protocol files are extensive (2000+ lines combined) and define every aspect of the team's behavior. The specifications in this Implementation Guide summarize the key requirements, but the full protocols provide comprehensive details including:
-- Detailed troubleshooting decision trees
-- Common mistakes and prevention strategies
-- Session summary templates
-- Emergency response protocols
-- Learning and improvement processes
+**Примечание**: Эти файлы протоколов обширны (2000+ строк вместе) и определяют каждый аспект поведения команды. Спецификации в этом Руководстве по реализации суммируют ключевые требования, но полные протоколы предоставляют подробные детали, включая:
+- Подробные деревья решений для устранения неполадок
+- Общие ошибки и стратегии предотвращения
+- Шаблоны сводок сеансов
+- Протоколы экстренного реагирования
+- Процессы обучения и улучшения
 
-**Obtaining the protocols**:
+**Получение протоколов**:
 
-**Option 1 - This Repository**: The complete protocol files are included in this repository. **Copy** (do not create) `networkguide.mdc` and `networkteam.mdc` from the repository root directory to your `.cursor/rules/` directory (for Cursor IDE) or set them up as rules in the appropriate rules directory for other AI assistants (check your AI assistant's documentation for the exact location). These files already exist in the repository and must be copied, not created from scratch.
+**Вариант 1 - Этот репозиторий**: Полные файлы протоколов включены в этот репозиторий. **Скопируйте** (не создавайте) `networkguide.mdc` и `networkteam.mdc` из корневой директории репозитория в вашу директорию `.cursor/rules/` (для Cursor IDE) или настройте их как правила в соответствующей директории правил для других ИИ-ассистентов (проверьте документацию вашего ИИ-ассистента для точного расположения). Эти файлы уже существуют в репозитории и должны быть скопированы, а не созданы с нуля.
 
-**Option 2 - Create Your Own**: Use the specifications in this Implementation Guide to create your own protocol files. The key sections are documented above (Team Structure, Core Workflow, Documentation Standards, etc.), and you can customize them for your specific needs.
+**Вариант 2 - Создайте свои собственные**: Используйте спецификации в этом Руководстве по реализации для создания ваших собственных файлов протоколов. Ключевые разделы задокументированы выше (Структура команды, Основной рабочий процесс, Стандарты документации и т.д.), и вы можете настроить их для ваших конкретных потребностей.
 
-For Cursor IDE, protocol files should be placed in `.cursor/rules/` directory. For other AI assistants, they should be set up as rules (not as project knowledge or general context).
+Для Cursor IDE файлы протоколов должны быть размещены в директории `.cursor/rules/`. Для других ИИ-ассистентов они должны быть настроены как правила (не как знания проекта или общий контекст).
 
-### Required Protocol Components
+### Необходимые компоненты протокола
 
-#### 1. Team Structure
+#### 1. Структура команды
 
-Define specialized expert roles:
-- **Service Delivery Manager**: Coordinates all work, assesses priorities, ensures quality
-- **Senior Network Engineer**: Routing, switching, VLANs, Wi-Fi
-- **Senior DevOps Engineer**: Docker, containers, orchestration
-- **Storage Systems Administrator**: NAS, storage, backups
-- **Network Security Engineer**: Firewalls, access control, security
-- **IoT & Automation Engineer**: Smart home devices, automation
-- **Backup & Recovery Specialist**: Backup strategies, recovery procedures
-- **Technical Documentation Specialist**: Documentation maintenance
+Определите специализированные роли экспертов:
+- **Service Delivery Manager**: Координирует всю работу, оценивает приоритеты, обеспечивает качество
+- **Senior Network Engineer**: Маршрутизация, коммутация, VLAN, Wi-Fi
+- **Senior DevOps Engineer**: Docker, контейнеры, оркестрация
+- **Storage Systems Administrator**: NAS, хранилище, резервные копии
+- **Network Security Engineer**: Файрволы, контроль доступа, безопасность
+- **IoT & Automation Engineer**: Устройства умного дома, автоматизация
+- **Backup & Recovery Specialist**: Стратегии резервного копирования, процедуры восстановления
+- **Technical Documentation Specialist**: Поддержка документации
 
-The team coordinates internally. Users see results, not coordination.
+Команда координируется внутренне. Пользователи видят результаты, а не координацию.
 
-#### 2. Core Workflow
+#### 2. Основной рабочий процесс
 
-For every user request, the AI must follow:
-1. **Verify**: Check actual state (e.g., `docker ps`, `ping`) before assuming
-2. **Research**: Read existing files in `docs/` and `inventory/`
-3. **Plan**: Decide on fix or change, assess impact
-4. **Execute**: Provide commands or perform edits
-5. **Document**: Update relevant `.md` files in `docs/` to reflect new state
+Для каждого запроса пользователя ИИ должен следовать:
+1. **Проверить**: Проверить фактическое состояние (например, `docker ps`, `ping`) перед предположениями
+2. **Исследовать**: Прочитать существующие файлы в `docs/` и `inventory/`
+3. **Планировать**: Решить об исправлении или изменении, оценить влияние
+4. **Выполнить**: Предоставить команды или выполнить редактирование
+5. **Задокументировать**: Обновить соответствующие файлы `.md` в `docs/`, чтобы отразить новое состояние
 
-#### 3. Documentation Standards
+#### 3. Стандарты документации
 
-The AI is responsible for maintaining the "Single Source of Truth" in the `docs/` folder:
-- **Topology**: Keep `docs/network/topology.md` updated
-- **Devices**: Create/update `docs/devices/{device}.md`
-- **Servers**: Create/update `docs/servers/{server}.md`
-- **Services**: Create/update `docs/services/{service}.md`
-- **Inventory**: Maintain YAML files in `inventory/`
+ИИ отвечает за поддержку "Единственного источника истины" в папке `docs/`:
+- **Топология**: Поддерживать `docs/network/topology.md` обновлённым
+- **Устройства**: Создавать/обновлять `docs/devices/{device}.md`
+- **Серверы**: Создавать/обновлять `docs/servers/{server}.md`
+- **Сервисы**: Создавать/обновлять `docs/services/{service}.md`
+- **Инвентарь**: Поддерживать YAML файлы в `inventory/`
 
-#### 4. Service Level Agreements (Priorities)
+#### 4. Соглашения об уровне обслуживания (Приоритеты)
 
-Assess urgency internally:
-- **CRITICAL**: Network outage, security breach, data loss risk (immediate action)
-- **URGENT**: Major service down, affecting multiple users/services (within 1 hour)
-- **HIGH**: Service degraded, single user impact (within 4 hours)
-- **MEDIUM**: Configuration changes, non-urgent updates (within 24 hours)
-- **LOW**: Documentation updates, optimization (best effort)
+Оценивайте срочность внутренне:
+- **CRITICAL**: Сбой сети, нарушение безопасности, риск потери данных (немедленные действия)
+- **URGENT**: Основной сервис не работает, влияет на нескольких пользователей/сервисы (в течение 1 часа)
+- **HIGH**: Сервис деградирован, влияние на одного пользователя (в течение 4 часов)
+- **MEDIUM**: Изменения конфигурации, несрочные обновления (в течение 24 часов)
+- **LOW**: Обновления документации, оптимизация (по возможности)
 
-#### 5. Change Management
+#### 5. Управление изменениями
 
-All changes require:
-- Documentation review before starting
-- Backup verification (check existing or create new)
-- Impact assessment (which services/devices affected)
-- Rollback plan identified
-- Post-change verification steps
-- Documentation updates after completion
+Все изменения требуют:
+- Просмотра документации перед началом
+- Проверки резервной копии (проверить существующую или создать новую)
+- Оценки влияния (какие сервисы/устройства затронуты)
+- Определения плана отката
+- Шагов проверки после изменения
+- Обновлений документации после завершения
 
-Major changes additionally require:
-- User notification of potential impact
-- Extended verification period
-- Clear rollback procedures documented
+Крупные изменения дополнительно требуют:
+- Уведомления пользователя о потенциальном влиянии
+- Расширенного периода проверки
+- Чётких задокументированных процедур отката
 
-#### 6. Verification Requirements
+#### 6. Требования к проверке
 
-The AI must never assume. Always verify:
-- Container names: `docker ps --format "{{.Names}}"`
-- SSH users: Check docs, then verify with `whoami`
-- Service status: Check reality before troubleshooting
-- File locations: Verify with `find` or check documentation
-- Network configuration: Compare actual vs. documented state
+ИИ никогда не должен предполагать. Всегда проверять:
+- Имена контейнеров: `docker ps --format "{{.Names}}"`
+- Пользователей SSH: Проверить документацию, затем проверить с `whoami`
+- Статус сервиса: Проверить реальность перед устранением неполадок
+- Расположение файлов: Проверить с `find` или проверить документацию
+- Конфигурацию сети: Сравнить фактическое состояние с задокументированным
 
-#### 7. Communication Style
+#### 7. Стиль общения
 
-- Professional but conversational
-- Action-oriented: "I checked X, found Y, fixed it by doing Z"
-- Always show verification: "✓ Service is responding"
-- No internal process explanation: Don't list which experts were consulted
+- Профессиональный, но разговорный
+- Ориентированный на действия: "Я проверил X, нашёл Y, исправил это, сделав Z"
+- Всегда показывать проверку: "✓ Сервис отвечает"
+- Без объяснения внутренних процессов: Не перечислять, какие эксперты были проконсультированы
 
-## Initial Setup Process
+## Процесс первоначальной настройки
 
-When setting up a new Vibe Infrastructure system, the AI should:
+При настройке новой системы Vibe Infrastructure ИИ должен:
 
-1. **Copy protocol files from repository** (DO NOT create new files - these already exist in the repository):
-   - Copy `networkguide.mdc` from the repository root to `.cursor/rules/networkguide.mdc` (or equivalent rules directory)
-   - Copy `networkteam.mdc` from the repository root to `.cursor/rules/networkteam.mdc` (or equivalent rules directory)
-   - These files define the AI's behavior and must be copied from the repository, not created from scratch
+1. **Скопировать файлы протоколов из репозитория** (НЕ создавайте новые файлы - они уже существуют в репозитории):
+   - Скопировать `networkguide.mdc` из корня репозитория в `.cursor/rules/networkguide.mdc` (или эквивалентную директорию правил)
+   - Скопировать `networkteam.mdc` из корня репозитория в `.cursor/rules/networkteam.mdc` (или эквивалентную директорию правил)
+   - Эти файлы определяют поведение ИИ и должны быть скопированы из репозитория, а не созданы с нуля
 
-2. **Create directory structure** (exactly as specified above - create ALL directories):
-   - `docs/` (root documentation directory)
-   - `docs/network/` (directory for network topology and configuration)
-   - `docs/network/configs/` (subdirectory for configuration backups - REQUIRED)
-   - `docs/devices/` (directory for individual device files)
-   - `docs/servers/` (directory for individual server files)
-   - `docs/services/` (directory for individual service files)
-   - `inventory/` (for YAML inventory files)
-   - `scripts/` (for automation scripts)
-   - `diagnostics/` (for troubleshooting notes - create during initial setup)
-   - `.cursor/rules/` (for AI protocol files)
+2. **Создать структуру директорий** (точно как указано выше - создать ВСЕ директории):
+   - `docs/` (корневая директория документации)
+   - `docs/network/` (директория для топологии сети и конфигурации)
+   - `docs/network/configs/` (поддиректория для резервных копий конфигураций - ОБЯЗАТЕЛЬНО)
+   - `docs/devices/` (директория для отдельных файлов устройств)
+   - `docs/servers/` (директория для отдельных файлов серверов)
+   - `docs/services/` (директория для отдельных файлов сервисов)
+   - `inventory/` (для YAML файлов инвентаря)
+   - `scripts/` (для скриптов автоматизации)
+   - `diagnostics/` (для заметок по устранению неполадок - создать при первоначальной настройке)
+   - `.cursor/rules/` (для файлов протоколов ИИ)
 
-3. **Create initial template files** (use exact paths specified):
-   - `docs/network/topology.md` (basic template - MUST be in `docs/network/` directory, NOT `docs/topology.md` at root)
-   - `inventory/devices.yaml` (YAML structure template)
-   - `inventory/servers.yaml` (YAML structure template)
-   - `inventory/services.yaml` (YAML structure template - NOT `ip_allocation.yaml`)
-   - **Important**: Do NOT create `docs/servers.md` or `docs/services.md` as single files - these are directories containing individual `{name}.md` files (e.g., `docs/servers/nas.md`, `docs/services/plex.md`)
+3. **Создать начальные шаблонные файлы** (использовать точные пути, указанные выше):
+   - `docs/network/topology.md` (базовый шаблон - ДОЛЖЕН быть в директории `docs/network/`, НЕ `docs/topology.md` в корне)
+   - `inventory/devices.yaml` (шаблон структуры YAML)
+   - `inventory/servers.yaml` (шаблон структуры YAML)
+   - `inventory/services.yaml` (шаблон структуры YAML - НЕ `ip_allocation.yaml`)
+   - **Важно**: НЕ создавайте `docs/servers.md` или `docs/services.md` как отдельные файлы - это директории, содержащие отдельные файлы `{name}.md` (например, `docs/servers/nas.md`, `docs/services/plex.md`)
 
-4. **Ask user for initial information**:
-   - Router model and IP address
-   - Access method (SSH user, web UI URL)
-   - Any existing network documentation
-   - Key devices or services to document first
+4. **Спросить у пользователя начальную информацию**:
+   - Модель роутера и IP-адрес
+   - Метод доступа (пользователь SSH, URL веб-интерфейса)
+   - Любая существующая сетевая документация
+   - Ключевые устройства или сервисы для документирования в первую очередь
 
-## Documentation File Formats
+## Форматы файлов документации
 
-### Device Documentation (`docs/devices/{device}.md`)
+### Документация устройства (`docs/devices/{device}.md`)
 
-Required sections:
-- Basic Information (type, model, location, purpose)
-- Network Configuration (IP addresses, interfaces, VLANs)
-- Authentication (access methods, credentials location)
-- Services/Features (what the device provides)
-- Configuration Details (important settings, custom configs)
-- Troubleshooting (common issues and solutions)
-- Last Updated timestamp
+Обязательные разделы:
+- Основная информация (тип, модель, расположение, назначение)
+- Сетевая конфигурация (IP-адреса, интерфейсы, VLAN)
+- Аутентификация (методы доступа, расположение учётных данных)
+- Сервисы/Функции (что предоставляет устройство)
+- Детали конфигурации (важные настройки, пользовательские конфигурации)
+- Устранение неполадок (общие проблемы и решения)
+- Временная метка последнего обновления
 
-**Example Template**:
+**Пример шаблона**:
 
 ```markdown
 # EdgeRouter X
 
-## Basic Information
-- **Type**: Router
-- **Model**: EdgeRouter X 5-Port
-- **Location**: Network closet
-- **Purpose**: Primary router and firewall
+## Основная информация
+- **Тип**: Роутер
+- **Модель**: EdgeRouter X 5-Port
+- **Расположение**: Сетевой шкаф
+- **Назначение**: Основной роутер и файрвол
 
-## Network Configuration
-- **WAN Interface**: eth0 (DHCP from ISP)
-- **LAN Interface**: switch0 (192.168.1.1/24)
-- **Management**: 192.168.1.1
+## Сетевая конфигурация
+- **WAN Интерфейс**: eth0 (DHCP от провайдера)
+- **LAN Интерфейс**: switch0 (192.168.1.1/24)
+- **Управление**: 192.168.1.1
 
-## Authentication
+## Аутентификация
 - **SSH**: `ssh admin@192.168.1.1`
-- **Web UI**: https://192.168.1.1
-- **Credentials**: Stored in password manager
+- **Веб-интерфейс**: https://192.168.1.1
+- **Учётные данные**: Хранятся в менеджере паролей
 
-## Services/Features
+## Сервисы/Функции
 - NAT
-- DHCP Server (192.168.1.100-192.168.1.200)
+- DHCP сервер (192.168.1.100-192.168.1.200)
 - DNS Forwarding
-- Firewall
+- Файрвол
 
-## Configuration Details
-- DHCP enabled on switch0
-- NAT masquerading on eth0
-- Hardware offloading enabled
+## Детали конфигурации
+- DHCP включён на switch0
+- NAT masquerading на eth0
+- Аппаратное ускорение включено
 
-## Troubleshooting
-(To be populated as issues are encountered)
+## Устранение неполадок
+(Будет заполнено по мере возникновения проблем)
 
-**Last Updated**: 2025-01-19
+**Последнее обновление**: 2025-01-19
 ```
 
-### Server Documentation (`docs/servers/{server}.md`)
+### Документация сервера (`docs/servers/{server}.md`)
 
-Required sections:
-- Basic Information (type, model, location, OS)
-- Network Configuration (IP addresses, interfaces)
-- Authentication (SSH user, access methods)
-- Services Running (what services are hosted)
-- Storage Configuration (if applicable)
-- Docker/Container Setup (if applicable)
-- Backup Information
-- Last Updated timestamp
+Обязательные разделы:
+- Основная информация (тип, модель, расположение, ОС)
+- Сетевая конфигурация (IP-адреса, интерфейсы)
+- Аутентификация (пользователь SSH, методы доступа)
+- Запущенные сервисы (какие сервисы размещены)
+- Конфигурация хранилища (если применимо)
+- Настройка Docker/Контейнеров (если применимо)
+- Информация о резервном копировании
+- Временная метка последнего обновления
 
-**Example Template**:
+**Пример шаблона**:
 
 ```markdown
 # QNAP NAS
 
-## Basic Information
-- **Type**: NAS
-- **Model**: QNAP TS-451
-- **Location**: Network closet
-- **Operating System**: QTS 5.2.4
+## Основная информация
+- **Тип**: NAS
+- **Модель**: QNAP TS-451
+- **Расположение**: Сетевой шкаф
+- **Операционная система**: QTS 5.2.4
 
-## Network Configuration
-- **Primary IP**: 192.168.1.200
-- **Hostname**: NAS
-- **Interfaces**: eth0 (primary), eth1 (secondary)
+## Сетевая конфигурация
+- **Основной IP**: 192.168.1.200
+- **Имя хоста**: NAS
+- **Интерфейсы**: eth0 (основной), eth1 (вторичный)
 
-## Authentication
+## Аутентификация
 - **SSH**: `ssh admin@192.168.1.200`
-- **Web UI**: https://192.168.1.200
-- **Credentials**: Stored in password manager
+- **Веб-интерфейс**: https://192.168.1.200
+- **Учётные данные**: Хранятся в менеджере паролей
 
-## Services Running
-- SMB/CIFS file sharing
-- NFS file sharing
-- WireGuard VPN server
-- Transmission (torrent client)
+## Запущенные сервисы
+- Общий доступ к файлам SMB/CIFS
+- Общий доступ к файлам NFS
+- WireGuard VPN сервер
+- Transmission (торрент-клиент)
 
-## Storage Configuration
-- **Total Storage**: 16TB
-- **Used**: 8.3TB
-- **Available**: 7.6TB
+## Конфигурация хранилища
+- **Общее хранилище**: 16TB
+- **Использовано**: 8.3TB
+- **Доступно**: 7.6TB
 - **RAID**: RAID 5
 
-## Docker/Container Setup
-- Docker available via Container Station
-- Containers use bridge network by default
+## Настройка Docker/Контейнеров
+- Docker доступен через Container Station
+- Контейнеры используют сеть bridge по умолчанию
 
-## Backup Information
-- Configuration backups: `backups/nas_configs_raw_YYYY-MM-DD.zip`
-- Automated backup schedule: Weekly
+## Информация о резервном копировании
+- Резервные копии конфигурации: `backups/nas_configs_raw_YYYY-MM-DD.zip`
+- Расписание автоматического резервного копирования: Еженедельно
 
-**Last Updated**: 2025-01-19
+**Последнее обновление**: 2025-01-19
 ```
 
-### Service Documentation (`docs/services/{service}.md`)
+### Документация сервиса (`docs/services/{service}.md`)
 
-Required sections:
-- Description
-- Network Configuration (IP, ports, domains)
-- Docker Compose File Location (if containerized)
-- Persistent Data Paths
-- Special Notes (GPU, special configs, dependencies)
-- Troubleshooting (common issues and solutions)
-- Last Updated timestamp
+Обязательные разделы:
+- Описание
+- Сетевая конфигурация (IP, порты, домены)
+- Расположение файла Docker Compose (если контейнеризован)
+- Пути постоянных данных
+- Особые примечания (GPU, специальные конфигурации, зависимости)
+- Устранение неполадок (общие проблемы и решения)
+- Временная метка последнего обновления
 
-**Example Template**:
+**Пример шаблона**:
 
 ```markdown
 # Plex Media Server
 
-## Description
-Media streaming server for video, music, and photos.
+## Описание
+Сервер потоковой передачи медиа для видео, музыки и фотографий.
 
-## Network Configuration
-- **IP Address**: 192.168.1.50 (macvlan)
-- **Port**: 32400
-- **Domain**: plex.example.com (via reverse proxy)
+## Сетевая конфигурация
+- **IP-адрес**: 192.168.1.50 (macvlan)
+- **Порт**: 32400
+- **Домен**: plex.example.com (через обратный прокси)
 
-## Docker Compose File Location
+## Расположение файла Docker Compose
 - `~/dockers/plex/docker-compose.yml`
 
-## Persistent Data Paths
-- **Configuration**: `/srv/docker-data/plex/config` → `/config`
-- **Transcode Cache**: `/srv/docker-data/plex/transcode` → `/transcode`
-- **Media Library**: `/mnt/nas/videos` → `/videos`
+## Пути постоянных данных
+- **Конфигурация**: `/srv/docker-data/plex/config` → `/config`
+- **Кэш транскодирования**: `/srv/docker-data/plex/transcode` → `/transcode`
+- **Медиа-библиотека**: `/mnt/nas/videos` → `/videos`
 
-## Special Notes
-- GPU transcoding enabled (NVIDIA RTX 3060)
-- USB device access configured to prevent libusb_init errors
+## Особые примечания
+- Транскодирование GPU включено (NVIDIA RTX 3060)
+- Доступ к USB-устройствам настроен для предотвращения ошибок libusb_init
 
-## Troubleshooting
-### Container Exits with "libusb_init failed" Error
-**Symptom**: Container stops immediately with error "Critical: libusb_init failed"
-**Solution**: Ensure USB device access is configured in docker-compose.yml:
+## Устранение неполадок
+### Контейнер завершается с ошибкой "libusb_init failed"
+**Симптом**: Контейнер останавливается сразу с ошибкой "Critical: libusb_init failed"
+**Решение**: Убедитесь, что доступ к USB-устройствам настроен в docker-compose.yml:
 ```yaml
 devices:
   - /dev/bus/usb:/dev/bus/usb
 ```
 
-**Last Updated**: 2025-01-29
+**Последнее обновление**: 2025-01-29
 ```
 
-### Network Topology (`docs/network/topology.md`)
+### Топология сети (`docs/network/topology.md`)
 
-Required sections:
-- Core Devices and Connections (table format)
-- Logical Networks and VLANs
-- IP Addressing Scheme
-- Wireless Access Points (if applicable)
-- SSIDs and VLAN Mapping (if applicable)
+Обязательные разделы:
+- Основные устройства и соединения (формат таблицы)
+- Логические сети и VLAN
+- Схема IP-адресации
+- Точки беспроводного доступа (если применимо)
+- SSID и маппинг VLAN (если применимо)
 
-## Inventory YAML Structure
+## Структура YAML инвентаря
 
 ### `inventory/devices.yaml`
 
@@ -423,11 +423,11 @@ services:
     description: "What the service does"
 ```
 
-## Verification Commands
+## Команды проверки
 
-The AI must use these commands to verify actual state:
+ИИ должен использовать эти команды для проверки фактического состояния:
 
-### Container Verification
+### Проверка контейнера
 ```bash
 docker ps --format "{{.Names}}\t{{.Status}}\t{{.Ports}}"
 docker ps -a --filter "name=<container_name>"
@@ -435,162 +435,162 @@ docker logs --tail 50 <container_name>
 docker inspect <container_name> | grep -A 5 IPAddress
 ```
 
-### Service Status
+### Статус сервиса
 ```bash
 systemctl status <service_name>
 curl -f http://<service_ip>:<port>
 ping <device_ip>
 ```
 
-### SSH Access
+### Доступ SSH
 ```bash
 ssh user@host "whoami"
 ssh user@host "pwd"
 ```
 
-### File Locations
+### Расположение файлов
 ```bash
 find ~/dockers -name "docker-compose.yml" -type f
 find /opt -name "docker-compose.yml" -type f
 ```
 
-## Common Patterns
+## Общие паттерны
 
-### Troubleshooting Pattern
+### Паттерн устранения неполадок
 
-When user reports an issue:
-1. Check documentation for the affected service/device
-2. Verify actual state (container status, service status, connectivity)
-3. Review recent changes in documentation
-4. Check for similar past issues in troubleshooting sections
-5. Diagnose based on actual state vs. documented state
-6. Fix the issue
-7. Verify the fix
-8. Document the solution
+Когда пользователь сообщает о проблеме:
+1. Проверить документацию для затронутого сервиса/устройства
+2. Проверить фактическое состояние (статус контейнера, статус сервиса, связность)
+3. Просмотреть недавние изменения в документации
+4. Проверить похожие прошлые проблемы в разделах устранения неполадок
+5. Диагностировать на основе фактического состояния vs. задокументированного состояния
+6. Исправить проблему
+7. Проверить исправление
+8. Задокументировать решение
 
-### Documentation Update Pattern
+### Паттерн обновления документации
 
-When making changes:
-1. Identify all files that need updating (device, server, service, topology, inventory)
-2. Create backup if needed
-3. Make the change
-4. Verify the change
-5. Update all relevant documentation files
-6. Update inventory if IPs, roles, or details changed
+При внесении изменений:
+1. Определить все файлы, которые нужно обновить (устройство, сервер, сервис, топология, инвентарь)
+2. Создать резервную копию при необходимости
+3. Внести изменение
+4. Проверить изменение
+5. Обновить все соответствующие файлы документации
+6. Обновить инвентарь, если изменились IP, роли или детали
 
-### Learning Pattern
+### Паттерн обучения
 
-When encountering issues:
-- **1st occurrence**: Document in service notes with date
-- **2nd occurrence**: Add to troubleshooting section
-- **3rd occurrence**: Add to quick diagnosis patterns in protocol
+При возникновении проблем:
+- **1-е появление**: Задокументировать в заметках сервиса с датой
+- **2-е появление**: Добавить в раздел устранения неполадок
+- **3-е появление**: Добавить в паттерны быстрой диагностики в протоколе
 
-## Troubleshooting the Vibe Infrastructure System
+## Устранение неполадок системы Vibe Infrastructure
 
-If the AI is not behaving as expected:
+Если ИИ ведёт себя неожиданно:
 
-### AI Not Following Protocols
-- **Check**: Are the protocol files properly set up as rules?
-- **Verify**: In Cursor, check `.cursor/rules/` exists and contains `networkguide.mdc` and `networkteam.mdc`
-- **Verify**: For other AI assistants, check that the files are in the rules directory (not project knowledge)
-- **Test**: Ask AI "What are your core workflow steps?" - it should respond with Verify → Research → Plan → Execute → Document
+### ИИ не следует протоколам
+- **Проверить**: Правильно ли настроены файлы протоколов как правила?
+- **Проверить**: В Cursor проверьте, что `.cursor/rules/` существует и содержит `networkguide.mdc` и `networkteam.mdc`
+- **Проверить**: Для других ИИ-ассистентов проверьте, что файлы находятся в директории правил (не в знаниях проекта)
+- **Тест**: Спросите ИИ "Какие у тебя основные шаги рабочего процесса?" - он должен ответить: Проверить → Исследовать → Планировать → Выполнить → Задокументировать
 
-### Documentation Not Updating
-- **Check**: Does AI have write access to `docs/` directory?
-- **Verify**: Git status shows uncommitted changes after AI makes updates
-- **Fix**: Ensure file permissions allow writing
+### Документация не обновляется
+- **Проверить**: Есть ли у ИИ доступ на запись в директорию `docs/`?
+- **Проверить**: Git status показывает незакоммиченные изменения после обновлений ИИ
+- **Исправить**: Убедитесь, что права на файлы разрешают запись
 
-### AI Not Verifying Actual State
-- **Check**: Does AI have command execution capabilities?
-- **Test**: Ask AI "What containers are running?" - it should run `docker ps`, not guess
-- **Fix**: Enable command execution in AI assistant settings
+### ИИ не проверяет фактическое состояние
+- **Проверить**: Есть ли у ИИ возможности выполнения команд?
+- **Тест**: Спросите ИИ "Какие контейнеры работают?" - он должен выполнить `docker ps`, а не угадывать
+- **Исправить**: Включите выполнение команд в настройках ИИ-ассистента
 
-### AI Assuming Instead of Checking
-- **Remind**: Include in your request "Verify the actual state first"
-- **Protocol Update**: Add emphasis to verification requirements in protocol
-- **Check**: Review verification commands are accessible to AI
+### ИИ предполагает вместо проверки
+- **Напомнить**: Включите в ваш запрос "Сначала проверь фактическое состояние"
+- **Обновление протокола**: Добавьте акцент на требования к проверке в протоколе
+- **Проверить**: Просмотрите, доступны ли команды проверки для ИИ
 
-### Documentation Structure Wrong
-- **Verify**: Directory structure matches the specification exactly
-- **Check**: Paths in inventory YAML files are correct
-- **Fix**: Recreate directory structure if needed
+### Неправильная структура документации
+- **Проверить**: Структура директорий точно соответствует спецификации
+- **Проверить**: Пути в YAML файлах инвентаря правильны
+- **Исправить**: Пересоздайте структуру директорий при необходимости
 
-## Customization Points
+## Точки настройки
 
-The system can be customized by modifying:
+Система может быть настроена путём изменения:
 
-1. **Team Roles**: Add or remove expert roles based on infrastructure
-2. **Priority Definitions**: Adjust SLA priorities to match user needs
-3. **Documentation Structure**: Modify file organization if needed
-4. **Verification Commands**: Add domain-specific verification steps
-5. **Workflow Steps**: Adjust the core workflow if preferred
+1. **Роли команды**: Добавлять или удалять роли экспертов на основе инфраструктуры
+2. **Определения приоритетов**: Настраивать приоритеты SLA в соответствии с потребностями пользователя
+3. **Структура документации**: Изменять организацию файлов при необходимости
+4. **Команды проверки**: Добавлять шаги проверки для конкретной области
+5. **Шаги рабочего процесса**: Настраивать основной рабочий процесс при предпочтении
 
-## Questions to Ask During Initial Setup
+## Вопросы для первоначальной настройки
 
-When setting up a new system, the AI should ask:
+При настройке новой системы ИИ должен спросить:
 
-1. **Router Information**:
-   - What router model do you have?
-   - What is the router's IP address?
-   - How do you access it? (SSH user, web UI URL)
-   - Do you have SSH keys set up?
+1. **Информация о роутере**:
+   - Какая у вас модель роутера?
+   - Какой IP-адрес роутера?
+   - Как вы получаете к нему доступ? (пользователь SSH, URL веб-интерфейса)
+   - Настроены ли у вас SSH-ключи?
 
-2. **Network Structure**:
-   - What is your main network IP range? (e.g., 192.168.1.0/24)
-   - Do you use VLANs? If so, what VLANs and their purposes?
-   - What devices are on your network?
+2. **Структура сети**:
+   - Какой у вас основной диапазон IP сети? (например, 192.168.1.0/24)
+   - Используете ли вы VLAN? Если да, какие VLAN и их назначение?
+   - Какие устройства в вашей сети?
 
-3. **Servers**:
-   - Do you have a NAS or home server?
-   - What services are running? (Plex, Home Assistant, etc.)
-   - Are services containerized? (Docker)
+3. **Серверы**:
+   - Есть ли у вас NAS или домашний сервер?
+   - Какие сервисы работают? (Plex, Home Assistant и т.д.)
+   - Контейнеризованы ли сервисы? (Docker)
 
-4. **Access Methods**:
-   - Can you SSH to your devices?
-   - Do you have SSH keys configured?
-   - Are there any devices that require special access methods?
+4. **Методы доступа**:
+   - Можете ли вы SSH к вашим устройствам?
+   - Настроены ли у вас SSH-ключи?
+   - Есть ли устройства, требующие специальных методов доступа?
 
-5. **Existing Documentation**:
-   - Do you have any existing network documentation?
-   - Are there configuration backups I should know about?
+5. **Существующая документация**:
+   - Есть ли у вас какая-либо существующая сетевая документация?
+   - Есть ли резервные копии конфигураций, о которых мне следует знать?
 
-## Implementation Checklist
+## Чеклист реализации
 
-When implementing, ensure:
+При реализации убедитесь:
 
-- [ ] Directory structure created
-- [ ] AI team protocol configured
-- [ ] Initial template files created
-- [ ] Router documented (first device)
-- [ ] Network topology started
-- [ ] Inventory files initialized
-- [ ] User understands the system is ready for first task
+- [ ] Структура директорий создана
+- [ ] Протокол команды ИИ настроен
+- [ ] Начальные шаблонные файлы созданы
+- [ ] Роутер задокументирован (первое устройство)
+- [ ] Топология сети начата
+- [ ] Файлы инвентаря инициализированы
+- [ ] Пользователь понимает, что система готова к первой задаче
 
-The system builds itself over time. Start with basics—the AI will add details as you work together.
+Система строится сама со временем. Начните с основ — ИИ добавит детали по мере совместной работы.
 
-## After Initial Setup: First Tasks
+## После первоначальной настройки: Первые задачи
 
-Once the initial setup is complete, start with simple documentation tasks:
+После завершения первоначальной настройки начните с простых задач документирования:
 
-### Good First Tasks
-- "Document my NAS at 192.168.1.200"
-- "Check if all services are running"
-- "Update the network topology with my switch"
-- "Add documentation for my Plex server"
+### Хорошие первые задачи
+- "Задокументируй мой NAS по адресу 192.168.1.200"
+- "Проверь, все ли сервисы работают"
+- "Обнови топологию сети моим коммутатором"
+- "Добавь документацию для моего Plex сервера"
 
-### Avoid as First Tasks
-- Complex migrations or reconfigurations
-- Emergency troubleshooting
-- Large-scale infrastructure changes
+### Избегать как первых задач
+- Сложные миграции или реконфигурации
+- Экстренное устранение неполадок
+- Крупномасштабные изменения инфраструктуры
 
-**Why**: First tasks build the documentation foundation. The system becomes more effective as it learns your infrastructure through these initial documentation tasks.
+**Почему**: Первые задачи строят основу документации. Система становится более эффективной по мере изучения вашей инфраструктуры через эти начальные задачи документирования.
 
-### Moving to Operational Use
+### Переход к операционному использованию
 
-After 3-5 devices/services are documented, the system is ready for:
-- Troubleshooting issues
-- Making configuration changes
-- Updating services
-- Complex tasks requiring context
+После документирования 3-5 устройств/сервисов система готова к:
+- Устранению неполадок
+- Внесению изменений конфигурации
+- Обновлению сервисов
+- Сложным задачам, требующим контекста
 
-The more documented, the more capable the system becomes.
+Чем больше задокументировано, тем более способной становится система.
